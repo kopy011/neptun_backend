@@ -18,6 +18,8 @@ namespace neptun_backend.Entities
 
         [ForeignKey("SemesterId")]
         public Semester? semester { get; set; }
+
+        public List<Student> students { get; set; }
     }
 
 }
