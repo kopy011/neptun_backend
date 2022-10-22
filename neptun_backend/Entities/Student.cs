@@ -15,8 +15,13 @@ namespace neptun_backend.Entities
         }
 
         public string neptunCode { get; set; }
+
         public string name { get; set; }
+
         public string email { get; set; }
-        public string major { get; set; }
+
+        public Major major { get; set; }
+
+        public List<Course> courses;
     }
 }

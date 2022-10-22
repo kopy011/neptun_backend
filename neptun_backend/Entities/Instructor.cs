@@ -16,8 +16,11 @@ namespace neptun_backend.Entities
         }
 
         public string neptunCode { get; set; }
+
         public string name { get; set; }
+
         public string email { get; set; }
-        public string classificitioan { get; set; }
+
+        public Classification classificitioan { get; set; }
     }
 }
