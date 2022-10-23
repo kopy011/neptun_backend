@@ -5,7 +5,7 @@ namespace neptun_backend.Entities
 {
     public class Instructor : AbstractEntity
     {
-        public enum Classification
+        public enum ClassificationType
         {
             docens,
             adjunktus,
@@ -15,12 +15,12 @@ namespace neptun_backend.Entities
             egyéb
         }
 
-        public string neptunCode { get; set; }
+        public string NeptunCode { get; set; }
 
-        public string name { get; set; }
+        public string Name { get; set; }
 
-        public string email { get; set; }
+        public string Email { get; set; }
 
-        public Classification classificitioan { get; set; }
+        public ClassificationType Classification { get; set; }
     }
 }

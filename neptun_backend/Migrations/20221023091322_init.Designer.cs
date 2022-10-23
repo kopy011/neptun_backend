@@ -12,8 +12,8 @@ using neptun_backend.Context;
 namespace neptun_backend.Migrations
 {
     [DbContext(typeof(NeptunBackendDbContext))]
-    [Migration("20221022181029_fix for relations")]
-    partial class fixforrelations
+    [Migration("20221023091322_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,33 +24,48 @@ namespace neptun_backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("CourseStudent", b =>
+                {
+                    b.Property<int>("CoursesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CoursesId", "StudentsId");
+
+                    b.HasIndex("StudentsId");
+
+                    b.ToTable("CourseStudent");
+                });
+
             modelBuilder.Entity("neptun_backend.Entities.Course", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Credit")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Department")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("SemesterId")
                         .HasColumnType("int");
 
-                    b.Property<string>("code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("credit")
-                        .HasColumnType("int");
-
-                    b.Property<string>("department")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.HasIndex("SemesterId");
 
@@ -59,121 +74,122 @@ namespace neptun_backend.Migrations
 
             modelBuilder.Entity("neptun_backend.Entities.Instructor", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("Courseid")
+                    b.Property<int>("Classification")
                         .HasColumnType("int");
 
-                    b.Property<int>("classificitioan")
+                    b.Property<int?>("CourseId")
                         .HasColumnType("int");
 
-                    b.Property<string>("email")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("neptunCode")
+                    b.Property<string>("NeptunCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.HasIndex("Courseid");
+                    b.HasIndex("CourseId");
 
                     b.ToTable("Instructors");
                 });
 
             modelBuilder.Entity("neptun_backend.Entities.Semester", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("endDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("startDate")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("Semesters");
                 });
 
             modelBuilder.Entity("neptun_backend.Entities.Student", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("Courseid")
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Major")
                         .HasColumnType("int");
 
-                    b.Property<string>("email")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("major")
-                        .HasColumnType("int");
-
-                    b.Property<string>("name")
+                    b.Property<string>("NeptunCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("neptunCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("Courseid");
+                    b.HasKey("Id");
 
                     b.ToTable("Students");
                 });
 
+            modelBuilder.Entity("CourseStudent", b =>
+                {
+                    b.HasOne("neptun_backend.Entities.Course", null)
+                        .WithMany()
+                        .HasForeignKey("CoursesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("neptun_backend.Entities.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("neptun_backend.Entities.Course", b =>
                 {
-                    b.HasOne("neptun_backend.Entities.Semester", "semester")
+                    b.HasOne("neptun_backend.Entities.Semester", "Semester")
                         .WithMany()
                         .HasForeignKey("SemesterId");
 
-                    b.Navigation("semester");
+                    b.Navigation("Semester");
                 });
 
             modelBuilder.Entity("neptun_backend.Entities.Instructor", b =>
                 {
                     b.HasOne("neptun_backend.Entities.Course", null)
-                        .WithMany("instructors")
-                        .HasForeignKey("Courseid");
-                });
-
-            modelBuilder.Entity("neptun_backend.Entities.Student", b =>
-                {
-                    b.HasOne("neptun_backend.Entities.Course", null)
-                        .WithMany("students")
-                        .HasForeignKey("Courseid");
+                        .WithMany("Instructors")
+                        .HasForeignKey("CourseId");
                 });
 
             modelBuilder.Entity("neptun_backend.Entities.Course", b =>
                 {
-                    b.Navigation("instructors");
-
-                    b.Navigation("students");
+                    b.Navigation("Instructors");
                 });
 #pragma warning restore 612, 618
         }

@@ -5,7 +5,7 @@ namespace neptun_backend.Entities
 {
     public class Student : AbstractEntity
     {
-        public enum Major
+        public enum MajorType
         {
             mérnökinformatikusMsc,
             programtervezőinformatikusMsc,
@@ -14,12 +14,14 @@ namespace neptun_backend.Entities
             gazdaságinformatikusBsc
         }
 
-        public string neptunCode { get; set; }
+        public string NeptunCode { get; set; }
 
-        public string name { get; set; }
+        public string Name { get; set; }
 
-        public string email { get; set; }
+        public string Email { get; set; }
 
-        public Major major { get; set; }
+        public MajorType Major { get; set; }
+
+        public List<Course> Courses { get; set; }
     }
 }

@@ -6,6 +6,7 @@ namespace neptun_backend.Services
     public interface IInstructorService
     {
         List<Instructor> getAll();
+        //List<Course> getAllCourse();
     }
 
     public class InstructorService : IInstructorService
@@ -21,5 +22,12 @@ namespace neptun_backend.Services
         {
             return _dbContext.Instructors.ToList();
         }
+
+        //TODO: letisztázni az oktatók és tárgyak közti kapcsolatot
+
+        //public List<Course> getAllCourse()
+        //{
+        //    return _dbContext.Courses.Where(c => c.)
+        //}
     }
 }
