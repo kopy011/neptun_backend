@@ -7,7 +7,7 @@ namespace neptun_backend.Services
     public interface IInstructorService
     {
         List<Instructor> getAll();
-        List<Course> getAllCourse(string NeptunCode);
+        List<Course> getAllCourse(string NeptunCode, int SemesterId);
     }
 
     public class InstructorService : IInstructorService
@@ -23,9 +23,9 @@ namespace neptun_backend.Services
         {
             return _dbContext.Instructors.Include(i => i.Courses).ToList();
         }
-        public List<Course> getAllCourse(string NeptunCode)
+        public List<Course> getAllCourse(string NeptunCode, int SemesterId)
         {
-            return _dbContext.Instructors.Include(i => i.Courses).Where(i => i.NeptunCode.Equals(NeptunCode)).FirstOrDefault()?.Courses ?? new List<Course>();
+            return _dbContext.Instructors.Include(i => i.Courses.Where(c => c.Semester.Id == SemesterId)).Where(i => i.NeptunCode.Equals(NeptunCode)).FirstOrDefault()?.Courses ?? new List<Course>();
         }
     }
 }

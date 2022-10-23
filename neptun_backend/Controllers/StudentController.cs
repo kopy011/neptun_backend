@@ -21,9 +21,9 @@ namespace neptun_backend.Controllers
         }
 
         [HttpGet("courses")]
-        public IActionResult getAllCourse([FromQuery]string NeptunCode)
+        public IActionResult getAllCourse([FromQuery]string NeptunCode, [FromQuery]int SemesterId)
         {
-            return Ok(studentService.getAllCourse(NeptunCode));
+            return Ok(studentService.getAllCourse(NeptunCode, SemesterId));
         }
     }
 }
