@@ -1,4 +1,5 @@
-﻿using neptun_backend.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using neptun_backend.Context;
 using neptun_backend.Entities;
 
 namespace neptun_backend.Services
@@ -6,6 +7,7 @@ namespace neptun_backend.Services
     public interface IStudentService
     {
         List<Student> getAll();
+        List<Course> getAllCourse(string NeptunCode);
     }
 
     public class StudentService : IStudentService
@@ -20,6 +22,11 @@ namespace neptun_backend.Services
         public List<Student> getAll()
         {
             return _dbContext.Students.ToList();
+        }
+
+        public List<Course> getAllCourse(string NeptunCode)
+        {
+            return _dbContext.Students.Include(s => s.Courses).Where(s => s.NeptunCode.Equals(NeptunCode)).FirstOrDefault()?.Courses ?? new List<Course>();
         }
     }
 }
