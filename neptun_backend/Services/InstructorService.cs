@@ -1,4 +1,5 @@
-﻿using neptun_backend.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using neptun_backend.Context;
 using neptun_backend.Entities;
 
 namespace neptun_backend.Services
@@ -6,7 +7,7 @@ namespace neptun_backend.Services
     public interface IInstructorService
     {
         List<Instructor> getAll();
-        //List<Course> getAllCourse();
+        List<Course> getAllCourse(string NeptunCode);
     }
 
     public class InstructorService : IInstructorService
@@ -22,12 +23,10 @@ namespace neptun_backend.Services
         {
             return _dbContext.Instructors.ToList();
         }
-
-        //TODO: letisztázni az oktatók és tárgyak közti kapcsolatot
-
-        //public List<Course> getAllCourse()
-        //{
-        //    return _dbContext.Courses.Where(c => c.)
-        //}
+        public List<Course> getAllCourse(string NeptunCode)
+        {
+            Instructor? instructor = _dbContext.Instructors.Include(i => i.Courses).FirstOrDefault(i => i.NeptunCode == NeptunCode);
+            return instructor?.Courses ?? new List<Course>();
+        }
     }
 }

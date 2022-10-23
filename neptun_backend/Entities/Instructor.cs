@@ -22,5 +22,7 @@ namespace neptun_backend.Entities
         public string Email { get; set; }
 
         public ClassificationType Classification { get; set; }
+
+        public List<Course> Courses { get; set; }
     }
 }

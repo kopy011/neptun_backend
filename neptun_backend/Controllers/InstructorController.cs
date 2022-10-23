@@ -19,5 +19,11 @@ namespace neptun_backend.Controllers
         {
             return Ok(instructorService.getAll());
         }
+
+        [HttpGet("courses")]
+        public IActionResult getCourses([FromQuery] string NeptunCode)
+        {
+            return Ok(instructorService.getAllCourse(NeptunCode));
+        }
     }
 }

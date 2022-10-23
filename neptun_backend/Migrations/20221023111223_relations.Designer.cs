@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using neptun_backend.Context;
 
@@ -11,9 +12,10 @@ using neptun_backend.Context;
 namespace neptun_backend.Migrations
 {
     [DbContext(typeof(NeptunBackendDbContext))]
-    partial class NeptunBackendDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221023111223_relations")]
+    partial class relations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace neptun_backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("CourseInstructor", b =>
-                {
-                    b.Property<int>("CoursesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InstructorsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CoursesId", "InstructorsId");
-
-                    b.HasIndex("InstructorsId");
-
-                    b.ToTable("CourseInstructor");
-                });
 
             modelBuilder.Entity("CourseStudent", b =>
                 {
@@ -96,6 +83,9 @@ namespace neptun_backend.Migrations
                     b.Property<int>("Classification")
                         .HasColumnType("int");
 
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -109,6 +99,8 @@ namespace neptun_backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
 
                     b.ToTable("Instructors");
                 });
@@ -164,21 +156,6 @@ namespace neptun_backend.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("CourseInstructor", b =>
-                {
-                    b.HasOne("neptun_backend.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("neptun_backend.Entities.Instructor", null)
-                        .WithMany()
-                        .HasForeignKey("InstructorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("CourseStudent", b =>
                 {
                     b.HasOne("neptun_backend.Entities.Course", null)
@@ -201,6 +178,22 @@ namespace neptun_backend.Migrations
                         .HasForeignKey("SemesterId");
 
                     b.Navigation("Semester");
+                });
+
+            modelBuilder.Entity("neptun_backend.Entities.Instructor", b =>
+                {
+                    b.HasOne("neptun_backend.Entities.Course", "Course")
+                        .WithMany("Instructors")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("neptun_backend.Entities.Course", b =>
+                {
+                    b.Navigation("Instructors");
                 });
 #pragma warning restore 612, 618
         }
