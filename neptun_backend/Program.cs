@@ -14,6 +14,11 @@ builder.Services.AddScoped<ISemesterService, SemesterService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+
 //connection string
 builder.Services.AddDbContext<NeptunBackendDbContext>(
     options => options.UseSqlServer("Server=.;Database=NeptunBackend;Trusted_Connection=True;MultipleActiveResultSets=True"));

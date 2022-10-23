@@ -21,12 +21,11 @@ namespace neptun_backend.Services
 
         public List<Instructor> getAll()
         {
-            return _dbContext.Instructors.ToList();
+            return _dbContext.Instructors.Include(i => i.Courses).ToList();
         }
         public List<Course> getAllCourse(string NeptunCode)
         {
-            Instructor? instructor = _dbContext.Instructors.Include(i => i.Courses).FirstOrDefault(i => i.NeptunCode == NeptunCode);
-            return instructor?.Courses ?? new List<Course>();
+            return _dbContext.Instructors.Include(i => i.Courses).Where(i => i.NeptunCode.Equals(NeptunCode)).FirstOrDefault()?.Courses ?? new List<Course>();
         }
     }
 }
