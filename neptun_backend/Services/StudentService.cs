@@ -1,32 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using neptun_backend.Context;
 using neptun_backend.Entities;
+using neptun_backend.UnitOfWork;
 
 namespace neptun_backend.Services
 {
     public interface IStudentService
     {
-        List<Student> getAll();
-        List<Course> getAllCourse(string NeptunCode, int SemesterId);
+        IEnumerable<Student> getAll();
+        IEnumerable<Course> getAllCourse(string NeptunCode, int SemesterId);
     }
 
-    public class StudentService : IStudentService
+    public class StudentService : AbstractService, IStudentService
     {
-        private readonly NeptunBackendDbContext _dbContext;
 
-        public StudentService(NeptunBackendDbContext dbContext)
+        public StudentService(IUnitOfWork unitOfWork) : base(unitOfWork) 
         {
-            _dbContext = dbContext;
         }
 
-        public List<Student> getAll()
+        public IEnumerable<Student> getAll()
         {
-            return _dbContext.Students.ToList();
+            return unitOfWork.GetRepository<Student>().GetAll();
         }
 
-        public List<Course> getAllCourse(string NeptunCode, int SemesterId)
+        public IEnumerable<Course> getAllCourse(string NeptunCode, int SemesterId)
         {
-            return _dbContext.Students.Include(s => s.Courses.Where(c => c.Semester.Id == SemesterId)).Where(s => s.NeptunCode.Equals(NeptunCode)).FirstOrDefault()?.Courses ?? new List<Course>();
+            return unitOfWork.GetRepository<Student>().GetAll().Include(s => s.Courses.Where(c => c.Semester.Id == SemesterId)).Where(s => s.NeptunCode.Equals(NeptunCode)).FirstOrDefault()?.Courses ?? new List<Course>();
         }
     }
 }

@@ -1,25 +1,25 @@
-﻿using neptun_backend.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using neptun_backend.Context;
 using neptun_backend.Entities;
+using neptun_backend.UnitOfWork;
 
 namespace neptun_backend.Services
 {
     public interface ICourseService
     {
-        List<Course> getAll();
+        IEnumerable<Course> getAll();
     }
 
-    public class CourseService : ICourseService
+    public class CourseService : AbstractService, ICourseService
     {
-        private readonly NeptunBackendDbContext _dbContext;
 
-        public CourseService(NeptunBackendDbContext dbContext)
+        public CourseService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            _dbContext = dbContext;
         }
 
-        public List<Course> getAll()
+        public IEnumerable<Course> getAll()
         {
-            return _dbContext.Courses.ToList();
+            return unitOfWork.GetRepository<Course>().GetAll().Include(c => c.Semester);
         }
     }
 }

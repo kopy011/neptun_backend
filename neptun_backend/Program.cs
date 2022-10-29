@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using neptun_backend.Context;
 using neptun_backend.Services;
+using neptun_backend.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.AddScoped<IInstructorService, InstructorService>();
 builder.Services.AddScoped<ISemesterService, SemesterService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork<NeptunBackendDbContext>>();
 
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>

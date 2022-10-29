@@ -1,25 +1,23 @@
 ﻿using neptun_backend.Context;
 using neptun_backend.Entities;
+using neptun_backend.UnitOfWork;
 
 namespace neptun_backend.Services
 {
     public interface ISemesterService
     {
-        List<Semester> getAll();
+        IEnumerable<Semester> getAll();
     }
 
-    public class SemesterService : ISemesterService
+    public class SemesterService : AbstractService, ISemesterService
     {
-        private readonly NeptunBackendDbContext _dbContext;
-
-        public SemesterService(NeptunBackendDbContext dbContext)
+        public SemesterService(IUnitOfWork unitOfWork): base(unitOfWork)
         {
-            _dbContext = dbContext;
         }
 
-        public List<Semester> getAll()
+        public IEnumerable<Semester> getAll()
         {
-            return _dbContext.Semesters.ToList();
+            return unitOfWork.GetRepository<Semester>().GetAll();
         }
     }
 }

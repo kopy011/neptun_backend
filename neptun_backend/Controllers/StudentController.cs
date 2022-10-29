@@ -17,7 +17,7 @@ namespace neptun_backend.Controllers
         [HttpGet]
         public IActionResult getAll()
         {
-            return Ok(studentService.getAll()[0].Courses);
+            return Ok(studentService.getAll());
         }
 
         [HttpGet("courses")]
