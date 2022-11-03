@@ -61,9 +61,9 @@ namespace neptun_backend.Services
 
         public async Task TakeACourse(int instructorId, int courseId)
         {
-            var instructor = unitOfWork.GetRepository<Instructor>().GetAll().Include(i => i.Courses).FirstOrDefault(i => i.Id == instructorId)
+            var instructor = unitOfWork.GetRepository<Instructor>().GetAll(tracking: true).Include(i => i.Courses).FirstOrDefault(i => i.Id == instructorId)
                 ?? throw new Exception("Instructor not found!");
-            var course = unitOfWork.GetRepository<Course>().GetAll().Include(c => c.Instructors).FirstOrDefault(c => c.Id == courseId)
+            var course = unitOfWork.GetRepository<Course>().GetAll(tracking: true).Include(c => c.Instructors).FirstOrDefault(c => c.Id == courseId)
                 ?? throw new Exception("Course not found!");
 
             if (instructor.Courses.Contains(course))
