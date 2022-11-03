@@ -78,9 +78,9 @@ namespace neptun_backend.UnitOfWork
             }
         }
 
-        public Task<int> SaveChangesAsync()
+        public Task SaveChangesAsync()
         {
-            throw new NotImplementedException();
+            return _context.SaveChangesAsync();
         }
     }
 }

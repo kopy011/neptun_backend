@@ -10,12 +10,12 @@ namespace neptun_backend.Services
 {
     public interface IInstructorService
     {
-        IEnumerable<Instructor> getAll();
-        IEnumerable<Course> getAllCourse(int instructorId, int semesterId);
-        int Create(Instructor instructorData);
-        int Update(Instructor instructorData);
-        int Delete(int id);
-        int takeACourse(int instructorId, int courseId);
+        IEnumerable<Instructor> GetAll();
+        IEnumerable<Course> GetAllCourse(int instructorId, int semesterId);
+        Task Create(Instructor instructorData);
+        Task Update(Instructor instructorData);
+        Task Delete(int id);
+        Task TakeACourse(int instructorId, int courseId);
     }
 
     public class InstructorService : AbstractService, IInstructorService
@@ -24,36 +24,42 @@ namespace neptun_backend.Services
         {
         }
 
-        public IEnumerable<Instructor> getAll()
+        public IEnumerable<Instructor> GetAll()
         {
             return unitOfWork.GetRepository<Instructor>().GetAll();
         }
 
-        public IEnumerable<Course> getAllCourse(int instructorId, int semesterId)
+        public IEnumerable<Course> GetAllCourse(int instructorId, int semesterId)
         {
             return unitOfWork.GetRepository<Instructor>().GetAll().Include(i => i.Courses.Where(c => c.Semester.Id == semesterId)).Where(i => i.Id == instructorId).FirstOrDefault().Courses ?? new List<Course>();
         }
 
-        public int Create(Instructor instructorData)
+        public async Task Create(Instructor instructorData)
         {
-            unitOfWork.GetRepository<Instructor>().Create(instructorData);
-            return unitOfWork.SaveChanges();
+            await unitOfWork.GetRepository<Instructor>().Create(instructorData);
+            await unitOfWork.SaveChangesAsync();
         }
 
-        public int Update(Instructor instructorData)
+        public async Task Update(Instructor instructorData)
         {
             unitOfWork.GetRepository<Instructor>().Update(instructorData);
-            return unitOfWork.SaveChanges();
+            await unitOfWork.SaveChangesAsync();
         }
 
-        public int Delete(int id)
+        public async Task Delete(int id)
         {
-            Instructor instructor = unitOfWork.GetRepository<Instructor>().GetById(id);
+            Instructor instructor = await unitOfWork.GetRepository<Instructor>().GetById(id);
+
+            if(instructor == null)
+            {
+                throw new Exception("Instructor not found");
+            }
+
             instructor.isDeleted = true;
-            return unitOfWork.SaveChanges();
+            await unitOfWork.SaveChangesAsync();
         }
 
-        public int takeACourse(int instructorId, int courseId)
+        public async Task TakeACourse(int instructorId, int courseId)
         {
             var instructor = unitOfWork.GetRepository<Instructor>().GetAll().Include(i => i.Courses).FirstOrDefault(i => i.Id == instructorId)
                 ?? throw new Exception("Instructor not found!");
@@ -65,12 +71,9 @@ namespace neptun_backend.Services
                 throw new Exception("Instructor already instructs in the given course!");
             }
 
-            instructor.Courses.Add(course);
             course.Instructors.Add(instructor);
-            unitOfWork.GetRepository<Instructor>().Update(instructor);
-            unitOfWork.GetRepository<Course>().Update(course);
 
-            return unitOfWork.SaveChanges();
+            await unitOfWork.SaveChangesAsync();
         }
     }
 }

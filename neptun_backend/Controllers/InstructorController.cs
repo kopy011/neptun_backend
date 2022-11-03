@@ -16,41 +16,50 @@ namespace neptun_backend.Controllers
         }
 
         [HttpGet]
-        public IActionResult getAll()
+        public IActionResult GetAll()
         {
-            return Ok(instructorService.getAll());
+            return Ok(instructorService.GetAll());
         }
 
-        [HttpGet("courses")]
-        public IActionResult getCourses([FromQuery] int InstructorId, [FromQuery] int SemesterId)
+        [HttpGet("courses/{InstructorId}/{SemesterId}")]
+        public IActionResult GetCourses(int InstructorId, int SemesterId)
         {
-            return Ok(instructorService.getAllCourse(InstructorId, SemesterId));
+            return Ok(instructorService.GetAllCourse(InstructorId, SemesterId));
         }
 
         [HttpPost]
-        public IActionResult create([FromBody] Instructor instructor)
+        public async Task<IActionResult> Create([FromBody] Instructor instructor)
         {
-            return Ok(instructorService.Create(instructor));
+            await instructorService.Create(instructor);
+            return Ok();
         }
 
         [HttpPut]
-        public IActionResult update([FromBody] Instructor instructor)
+        public IActionResult Update([FromBody] Instructor instructor)
         {
             return Ok(instructorService.Update(instructor));
         }
 
         [HttpDelete]
-        public IActionResult delete([FromQuery] int instructorId)
-        {
-            return Ok(instructorService.Delete(instructorId));
-        }
-
-        [HttpPost("take")]
-        public IActionResult take([FromQuery] int InstructorId, [FromQuery] int CourseId)
+        public async Task<IActionResult> Delete([FromQuery] int instructorId)
         {
             try
             {
-                return Ok(instructorService.takeACourse(InstructorId, CourseId));
+                await instructorService.Delete(instructorId);
+                return Ok();
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("take/{InstructorId}/{CourseId}")]
+        public async Task<IActionResult> Take(int InstructorId, int CourseId)
+        {
+            try
+            {
+                await instructorService.TakeACourse(InstructorId, CourseId);
+                return Ok();
             } catch (Exception ex)
             {
                 return BadRequest(ex.Message);

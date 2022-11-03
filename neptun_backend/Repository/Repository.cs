@@ -21,9 +21,9 @@ namespace neptun_backend.Repository
             return dbSet.AsNoTracking();
         }
 
-        public TEntity GetById(int id)
+        public async Task<TEntity> GetById(int id)
         {
-            return dbSet.FirstOrDefault(e => e.Id == id);
+            return await dbSet.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task Create(TEntity entity)
@@ -31,7 +31,7 @@ namespace neptun_backend.Repository
             await dbSet.AddAsync(entity);
         }
 
-        public async Task Update(TEntity entity)
+        public void Update(TEntity entity)
         {
             dbSet.Update(entity);
         }

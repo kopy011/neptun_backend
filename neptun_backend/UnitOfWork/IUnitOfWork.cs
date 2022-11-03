@@ -12,7 +12,7 @@ namespace neptun_backend.UnitOfWork
 
         int SaveChanges();
 
-        Task<int> SaveChangesAsync();
+        Task SaveChangesAsync();
 
         DbContext Context();
     }
