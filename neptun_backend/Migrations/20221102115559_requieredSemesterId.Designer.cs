@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using neptun_backend.Context;
 
@@ -11,9 +12,10 @@ using neptun_backend.Context;
 namespace neptun_backend.Migrations
 {
     [DbContext(typeof(NeptunBackendDbContext))]
-    partial class NeptunBackendDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221102115559_requieredSemesterId")]
+    partial class requieredSemesterId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,9 +80,6 @@ namespace neptun_backend.Migrations
                     b.Property<int>("SemesterId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("SemesterId");
@@ -111,9 +110,6 @@ namespace neptun_backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.ToTable("Instructors");
@@ -136,9 +132,6 @@ namespace neptun_backend.Migrations
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -167,9 +160,6 @@ namespace neptun_backend.Migrations
                     b.Property<string>("NeptunCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

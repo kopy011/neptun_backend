@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
 namespace neptun_backend.Entities
 {
@@ -14,6 +16,7 @@ namespace neptun_backend.Entities
 
         public string Department { get; set; }
 
+        [Required]
         [ForeignKey("SemesterId")]
         public Semester Semester { get; set; }
 

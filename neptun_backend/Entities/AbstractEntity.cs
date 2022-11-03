@@ -9,5 +9,6 @@ namespace neptun_backend.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public bool isDeleted { get; set; }
     }
 }

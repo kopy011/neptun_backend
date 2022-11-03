@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using neptun_backend.Context;
 
@@ -11,9 +12,10 @@ using neptun_backend.Context;
 namespace neptun_backend.Migrations
 {
     [DbContext(typeof(NeptunBackendDbContext))]
-    partial class NeptunBackendDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221103151521_courseInstructor")]
+    partial class courseInstructor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace neptun_backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("CourseInstructor", b =>
-                {
-                    b.Property<int>("CoursesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InstructorsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CoursesId", "InstructorsId");
-
-                    b.HasIndex("InstructorsId");
-
-                    b.ToTable("CourseInstructor");
-                });
 
             modelBuilder.Entity("CourseStudent", b =>
                 {
@@ -86,6 +73,29 @@ namespace neptun_backend.Migrations
                     b.HasIndex("SemesterId");
 
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("neptun_backend.Entities.CourseInstructor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InstructorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("InstructorId");
+
+                    b.ToTable("CourseInstructor");
                 });
 
             modelBuilder.Entity("neptun_backend.Entities.Instructor", b =>
@@ -176,21 +186,6 @@ namespace neptun_backend.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("CourseInstructor", b =>
-                {
-                    b.HasOne("neptun_backend.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("neptun_backend.Entities.Instructor", null)
-                        .WithMany()
-                        .HasForeignKey("InstructorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("CourseStudent", b =>
                 {
                     b.HasOne("neptun_backend.Entities.Course", null)
@@ -215,6 +210,35 @@ namespace neptun_backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Semester");
+                });
+
+            modelBuilder.Entity("neptun_backend.Entities.CourseInstructor", b =>
+                {
+                    b.HasOne("neptun_backend.Entities.Course", "Course")
+                        .WithMany("CourseInstructors")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("neptun_backend.Entities.Instructor", "Instructor")
+                        .WithMany("CourseInstructors")
+                        .HasForeignKey("InstructorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Instructor");
+                });
+
+            modelBuilder.Entity("neptun_backend.Entities.Course", b =>
+                {
+                    b.Navigation("CourseInstructors");
+                });
+
+            modelBuilder.Entity("neptun_backend.Entities.Instructor", b =>
+                {
+                    b.Navigation("CourseInstructors");
                 });
 #pragma warning restore 612, 618
         }

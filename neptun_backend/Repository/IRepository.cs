@@ -4,6 +4,10 @@
     {
         IQueryable<TEntity> GetAll();
 
-        Task<TEntity> GetById(int id);
+        TEntity GetById(int id);
+
+        Task Create(TEntity entity);
+
+        Task Update(TEntity entity);
     }
 }

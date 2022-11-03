@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "GKDVMdxv9E6Y2d47MMJqgnQizTcKkP4MvjiuRCq8pdJJ45mbDMRBKr4mg8/8+K3fix7YtCTEdoJz2gUz1uoB9w==",
+  "dgSpecHash": "4V13kqahwS2MzVL8/B4fdGLrGXjCJv3PWTkUaHKQJJQkE0oFJVOLpF+sxqEI6ovA3SwH5qlDZK1BkY9U5W3jXA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\kopyk\\source\\repos\\kopy011\\neptun_backend\\neptun_backend\\neptun_backend.csproj",
+  "projectFilePath": "D:\\Programok\\.NET\\neptun_backend\\neptun_backend\\neptun_backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kopyk\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\kopyk\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\6.0.10\\microsoft.aspnetcore.jsonpatch.6.0.10.nupkg.sha512",

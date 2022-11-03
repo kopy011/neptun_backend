@@ -1,4 +1,5 @@
-﻿using neptun_backend.UnitOfWork;
+﻿using neptun_backend.Entities;
+using neptun_backend.UnitOfWork;
 
 namespace neptun_backend.Services
 {

@@ -8,7 +8,7 @@ namespace neptun_backend.Services
     public interface IStudentService
     {
         IEnumerable<Student> getAll();
-        IEnumerable<Course> getAllCourse(string NeptunCode, int SemesterId);
+        IEnumerable<Course> getAllCourse(int studentId, int semesterId);
     }
 
     public class StudentService : AbstractService, IStudentService
@@ -23,9 +23,9 @@ namespace neptun_backend.Services
             return unitOfWork.GetRepository<Student>().GetAll();
         }
 
-        public IEnumerable<Course> getAllCourse(string NeptunCode, int SemesterId)
+        public IEnumerable<Course> getAllCourse(int studentId, int semesterId)
         {
-            return unitOfWork.GetRepository<Student>().GetAll().Include(s => s.Courses.Where(c => c.Semester.Id == SemesterId)).Where(s => s.NeptunCode.Equals(NeptunCode)).FirstOrDefault()?.Courses ?? new List<Course>();
+            return unitOfWork.GetRepository<Student>().GetAll().Include(s => s.Courses.Where(c => c.Semester.Id == semesterId)).Where(s => s.Id == studentId).FirstOrDefault()?.Courses ?? new List<Course>();
         }
     }
 }

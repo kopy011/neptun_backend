@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using neptun_backend.Entities;
 using neptun_backend.Services;
 
 namespace neptun_backend.Controllers
@@ -21,9 +22,39 @@ namespace neptun_backend.Controllers
         }
 
         [HttpGet("courses")]
-        public IActionResult getCourses([FromQuery] string NeptunCode, [FromQuery] int SemesterId)
+        public IActionResult getCourses([FromQuery] int InstructorId, [FromQuery] int SemesterId)
         {
-            return Ok(instructorService.getAllCourse(NeptunCode, SemesterId));
+            return Ok(instructorService.getAllCourse(InstructorId, SemesterId));
+        }
+
+        [HttpPost]
+        public IActionResult create([FromBody] Instructor instructor)
+        {
+            return Ok(instructorService.Create(instructor));
+        }
+
+        [HttpPut]
+        public IActionResult update([FromBody] Instructor instructor)
+        {
+            return Ok(instructorService.Update(instructor));
+        }
+
+        [HttpDelete]
+        public IActionResult delete([FromQuery] int instructorId)
+        {
+            return Ok(instructorService.Delete(instructorId));
+        }
+
+        [HttpPost("take")]
+        public IActionResult take([FromQuery] int InstructorId, [FromQuery] int CourseId)
+        {
+            try
+            {
+                return Ok(instructorService.takeACourse(InstructorId, CourseId));
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
