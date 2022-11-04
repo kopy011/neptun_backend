@@ -65,5 +65,11 @@ namespace neptun_backend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("students/{InstructorId}/{SemesterId}")]
+        public IActionResult GetAllStudents(int InstructorId, int SemesterId)
+        {
+            return Ok(instructorService.GetAllStudents(InstructorId, SemesterId));
+        }
     }
 }

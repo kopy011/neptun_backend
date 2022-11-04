@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using neptun_backend.Context;
+using neptun_backend.DTOS;
 using neptun_backend.Entities;
 using neptun_backend.Repository;
 using neptun_backend.UnitOfWork;
@@ -12,6 +13,7 @@ namespace neptun_backend.Services
     {
         IEnumerable<Course> GetAllCourse(int InstructorId, int SemesterId, bool IgnoreFilters = false);
         Task TakeACourse(int InstructorId, int CourseId);
+        IEnumerable<InstructorStudentsDTO> GetAllStudents(int InstructorId, int SemesterId);
     }
 
     public class InstructorService : AbstractService<Instructor>, IInstructorService
@@ -26,6 +28,29 @@ namespace neptun_backend.Services
                 .Include(i => i.Courses.Where(c => c.Semester.Id == SemesterId))
                 .Where(i => i.Id == InstructorId).FirstOrDefault()?.Courses
                 ?? new List<Course>();
+        }
+
+        public IEnumerable<InstructorStudentsDTO> GetAllStudents(int InstructorId, int SemesterId)
+        {
+            var courseIds = from course in GetAllCourse(InstructorId, SemesterId, IgnoreFilters: true) select course.Id;
+            var coursesWithStudents = unitOfWork.GetRepository<Course>().GetAll(ignoreFilters: true).Include(c => c.Students).Where(c => courseIds.Any(cId => cId == c.Id));
+            Console.WriteLine(coursesWithStudents.Count());
+            List<InstructorStudentsDTO> students = new List<InstructorStudentsDTO>();
+            
+            foreach(var course in coursesWithStudents)
+            {
+                foreach(var student in course.Students)
+                {
+                    students.Add(new InstructorStudentsDTO
+                    {
+                        Name = student.Name,
+                        NeptunCode = student.NeptunCode,
+                        CourseCode = course.Code
+                    });
+                }
+            }
+
+            return students.OrderBy(s => s.CourseCode).ThenBy(s => s.Name);
         }
 
         public async Task TakeACourse(int InstructorId, int CourseId)
