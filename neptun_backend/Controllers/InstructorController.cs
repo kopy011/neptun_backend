@@ -71,5 +71,11 @@ namespace neptun_backend.Controllers
         {
             return Ok(instructorService.GetAllStudents(InstructorId, SemesterId));
         }
+
+        [HttpGet("semester-statistics/{InstructorId}")]
+        public IActionResult GetSemesterStatistics(int InstructorId)
+        {
+            return Ok(instructorService.GetSemesterStatistics(InstructorId));
+        }
     }
 }

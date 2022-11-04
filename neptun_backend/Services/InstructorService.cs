@@ -14,6 +14,7 @@ namespace neptun_backend.Services
         IEnumerable<Course> GetAllCourse(int InstructorId, int SemesterId, bool IgnoreFilters = false);
         Task TakeACourse(int InstructorId, int CourseId);
         IEnumerable<InstructorStudentsDTO> GetAllStudents(int InstructorId, int SemesterId);
+        public IEnumerable<StatPerSemesterDTO> GetSemesterStatistics(int InstructorId);
     }
 
     public class InstructorService : AbstractService<Instructor>, IInstructorService
@@ -68,6 +69,39 @@ namespace neptun_backend.Services
             course.Instructors.Add(instructor);
 
             await unitOfWork.SaveChangesAsync();
+        }
+
+        public IEnumerable<StatPerSemesterDTO> GetSemesterStatistics(int InstructorId)
+        {
+            var semesterIds = from semester in unitOfWork.GetRepository<Semester>().GetAll(ignoreFilters: true) select semester.Id;
+            List<StatPerSemesterDTO> SemesterStatistics = new List<StatPerSemesterDTO>();
+            
+            foreach(var sId in semesterIds)
+            {
+                var courses = GetAllCourse(InstructorId, sId, IgnoreFilters: true);
+                var students = GetAllStudents(InstructorId, sId);
+                List<string> countedStudentNeptunCodes = new List<string>();
+
+                int credits = courses.Sum(c => c.Credit);
+                int studentCount = 0;
+                foreach(var student in students)
+                {
+                    if (!countedStudentNeptunCodes.Contains(student.NeptunCode))
+                    {
+                        countedStudentNeptunCodes.Add(student.NeptunCode);
+                        studentCount++;
+                    }
+                }
+
+                SemesterStatistics.Add(new StatPerSemesterDTO
+                {
+                    SemesterId = sId,
+                    Credits = credits,
+                    Students = studentCount
+                });
+            }
+
+            return SemesterStatistics;
         }
     }
 }
