@@ -15,10 +15,10 @@ namespace neptun_backend.Controllers
             semesterService = _semesterService;
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
+        [HttpGet("{IgnoreFilters=false}")]
+        public IActionResult GetAll(bool IgnoreFilters)
         {
-            return Ok(semesterService.GetAll());
+            return Ok(semesterService.GetAll(IgnoreFilters));
         }
 
         [HttpPost]

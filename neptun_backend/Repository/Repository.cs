@@ -16,9 +16,16 @@ namespace neptun_backend.Repository
             dbSet = context.Set<TEntity>();
         }
 
-        public IQueryable<TEntity> GetAll(bool tracking = false)
+        public IQueryable<TEntity> GetAll(bool tracking = false, bool ignoreFilters = false)
         {
-            return tracking ? dbSet.AsQueryable() : dbSet.AsNoTracking();
+            if (ignoreFilters)
+            {
+                return tracking ? dbSet.IgnoreQueryFilters().AsQueryable() : dbSet.IgnoreQueryFilters().AsNoTracking();
+            }
+            else
+            {
+                return tracking ? dbSet.AsQueryable() : dbSet.AsNoTracking();
+            }
         }
 
         public async Task<TEntity> GetById(int id)

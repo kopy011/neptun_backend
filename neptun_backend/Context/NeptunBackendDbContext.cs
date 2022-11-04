@@ -15,5 +15,13 @@ namespace neptun_backend.Context
         {
             Database.SetCommandTimeout(60);
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Course>().HasQueryFilter(c => !c.isDeleted);
+            modelBuilder.Entity<Instructor>().HasQueryFilter(i => !i.isDeleted);
+            modelBuilder.Entity<Semester>().HasQueryFilter(s => !s.isDeleted);
+            modelBuilder.Entity<Student>().HasQueryFilter(s => !s.isDeleted);
+        }
     }
 }

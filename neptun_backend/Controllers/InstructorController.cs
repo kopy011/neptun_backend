@@ -15,16 +15,16 @@ namespace neptun_backend.Controllers
             instructorService = _instructorService;
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
+        [HttpGet("{IgnoreFilters=false}")]
+        public IActionResult GetAll(bool IgnoreFilters)
         {
-            return Ok(instructorService.GetAll());
+            return Ok(instructorService.GetAll(IgnoreFilters));
         }
 
-        [HttpGet("courses/{InstructorId}/{SemesterId}")]
-        public IActionResult GetCourses(int InstructorId, int SemesterId)
+        [HttpGet("courses/{InstructorId}/{SemesterId}/{IgnoreFilters=false}")]
+        public IActionResult GetCourses(int InstructorId, int SemesterId, bool IgnoreFilters)
         {
-            return Ok(instructorService.GetAllCourse(InstructorId, SemesterId));
+            return Ok(instructorService.GetAllCourse(InstructorId, SemesterId, IgnoreFilters));
         }
 
         [HttpPost]

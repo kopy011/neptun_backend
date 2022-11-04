@@ -2,7 +2,7 @@
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        IQueryable<TEntity> GetAll(bool tracking = false);
+        IQueryable<TEntity> GetAll(bool tracking = false, bool ignoreFilters = false);
 
         Task<TEntity> GetById(int id);
 

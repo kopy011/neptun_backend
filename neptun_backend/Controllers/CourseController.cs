@@ -15,10 +15,10 @@ namespace neptun_backend.Controllers
             courseService = _courseService;
         }
 
-        [HttpGet]
-        public IActionResult getAll()
+        [HttpGet("{IgnoreFilters=false}")]
+        public IActionResult getAll(bool IgnoreFilters)
         {
-            return Ok(courseService.GetAll());
+            return Ok(courseService.GetAll(IgnoreFilters));
         }
 
         [HttpPost]

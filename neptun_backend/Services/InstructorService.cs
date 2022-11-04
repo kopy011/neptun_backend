@@ -10,7 +10,7 @@ namespace neptun_backend.Services
 {
     public interface IInstructorService : IAbstractService<Instructor>
     {
-        IEnumerable<Course> GetAllCourse(int InstructorId, int SemesterId);
+        IEnumerable<Course> GetAllCourse(int InstructorId, int SemesterId, bool IgnoreFilters = false);
         Task TakeACourse(int InstructorId, int CourseId);
     }
 
@@ -20,9 +20,12 @@ namespace neptun_backend.Services
         {
         }
 
-        public IEnumerable<Course> GetAllCourse(int InstructorId, int SemesterId)
+        public IEnumerable<Course> GetAllCourse(int InstructorId, int SemesterId, bool IgnoreFilters = false)
         {
-            return unitOfWork.GetRepository<Instructor>().GetAll().Include(i => i.Courses.Where(c => c.Semester.Id == SemesterId)).Where(i => i.Id == InstructorId).FirstOrDefault().Courses ?? new List<Course>();
+            return unitOfWork.GetRepository<Instructor>().GetAll(ignoreFilters: IgnoreFilters)
+                .Include(i => i.Courses.Where(c => c.Semester.Id == SemesterId))
+                .Where(i => i.Id == InstructorId).FirstOrDefault()?.Courses
+                ?? new List<Course>();
         }
 
         public async Task TakeACourse(int InstructorId, int CourseId)
