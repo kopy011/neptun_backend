@@ -7,13 +7,16 @@ namespace neptun_backend.Services
 {
     public interface ICourseService : IAbstractService<Course>
     {
+        public IEnumerable<Course> getCoursesByDates(DateTime startDate, DateTime endDate, bool ignoreFilters = false);
     }
 
     public class CourseService : AbstractService<Course>, ICourseService
     {
+        private readonly ICourseUnitOfWork courseUnitOfWork;
 
-        public CourseService(IUnitOfWork unitOfWork) : base(unitOfWork)
+        public CourseService(IUnitOfWork unitOfWork, ICourseUnitOfWork _courseUnitOfWork) : base(unitOfWork)
         {
+            courseUnitOfWork = _courseUnitOfWork;
         }
 
         public override async Task Update(Course course)
@@ -26,6 +29,11 @@ namespace neptun_backend.Services
 
             unitOfWork.GetRepository<Course>().Update(course);
             await unitOfWork.SaveChangesAsync();
+        }
+
+        public IEnumerable<Course> getCoursesByDates(DateTime startDate, DateTime endDate, bool ignoreFilters = false)
+        {
+            return courseUnitOfWork.GetCoursesByDates(startDate, endDate, ignoreFilters);
         }
     }
 }

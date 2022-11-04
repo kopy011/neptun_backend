@@ -47,5 +47,11 @@ namespace neptun_backend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("{StartDate}/{EndDate}/{IgnoreFilters=false}")]
+        public IActionResult getCoursesByDates(DateTime StartDate, DateTime EndDate, bool IgnoreFilters = false)
+        {
+            return Ok(courseService.getCoursesByDates(StartDate, EndDate, IgnoreFilters));
+        }
     }
 }

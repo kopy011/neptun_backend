@@ -16,6 +16,7 @@ builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork<NeptunBackendDbContext>>();
+builder.Services.AddScoped<ICourseUnitOfWork, CourseUnitOfWork<NeptunBackendDbContext>>();
 
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>
