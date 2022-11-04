@@ -22,6 +22,8 @@ namespace neptun_backend.Entities
         public List<Instructor> Instructors { get; set; }
 
         public List<Student> Students { get; set; }
+
+        public string? ScheduleInformation { get; set; }
     }
 
 }

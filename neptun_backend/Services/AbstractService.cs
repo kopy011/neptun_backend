@@ -32,7 +32,7 @@ namespace neptun_backend.Services
             await unitOfWork.SaveChangesAsync();
         }
 
-        public async Task Update(TEntity Entity)
+        public virtual async Task Update(TEntity Entity)
         {
             unitOfWork.GetRepository<TEntity>().Update(Entity);
             await unitOfWork.SaveChangesAsync();

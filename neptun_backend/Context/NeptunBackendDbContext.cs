@@ -22,6 +22,8 @@ namespace neptun_backend.Context
             modelBuilder.Entity<Instructor>().HasQueryFilter(i => !i.isDeleted);
             modelBuilder.Entity<Semester>().HasQueryFilter(s => !s.isDeleted);
             modelBuilder.Entity<Student>().HasQueryFilter(s => !s.isDeleted);
+
+            modelBuilder.Entity<Course>().Property(c => c.ScheduleInformation).HasDefaultValue("ismeretlen");
         }
     }
 }

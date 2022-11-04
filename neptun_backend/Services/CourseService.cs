@@ -15,5 +15,17 @@ namespace neptun_backend.Services
         public CourseService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
         }
+
+        public override async Task Update(Course course)
+        {
+            if(course.ScheduleInformation == null)
+            {
+                var savedCourse = await unitOfWork.GetRepository<Course>().GetAll().Where(c => c.Id == course.Id).FirstOrDefaultAsync();
+                course.ScheduleInformation = savedCourse.ScheduleInformation;
+            }
+
+            unitOfWork.GetRepository<Course>().Update(course);
+            await unitOfWork.SaveChangesAsync();
+        }
     }
 }
