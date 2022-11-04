@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using neptun_backend.Entities;
 using neptun_backend.Services;
 
 namespace neptun_backend.Controllers
@@ -15,15 +16,58 @@ namespace neptun_backend.Controllers
         }
 
         [HttpGet]
-        public IActionResult getAll()
+        public IActionResult GetAll()
         {
-            return Ok(studentService.getAll());
+            return Ok(studentService.GetAll());
         }
 
-        [HttpGet("courses")]
-        public IActionResult getAllCourse([FromQuery]int StudentId, [FromQuery]int SemesterId)
+        [HttpGet("courses/{StudentId}/{SemesterId}")]
+        public IActionResult GetAllCourse(int StudentId, int SemesterId)
         {
-            return Ok(studentService.getAllCourse(StudentId, SemesterId));
+            return Ok(studentService.GetAllCourse(StudentId, SemesterId));
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] Student Student)
+        {
+            await studentService.Create(Student);
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] Student Student)
+        {
+            await studentService.Update(Student);
+            return Ok();
+        }
+
+        [HttpDelete("{StudentId}")]
+        public async Task<IActionResult> Delete(int StudentId)
+        {
+            try
+            {
+                await studentService.Delete(StudentId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("take/{StudentId}/{CourseId}")]
+        public async Task<IActionResult> Take(int StudentId, int CourseId)
+        {
+            try
+            {
+                await studentService.TakeACourse(StudentId, CourseId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

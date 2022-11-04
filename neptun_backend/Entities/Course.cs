@@ -16,9 +16,8 @@ namespace neptun_backend.Entities
 
         public string Department { get; set; }
 
-        [Required]
-        [ForeignKey("SemesterId")]
-        public Semester Semester { get; set; }
+        public int SemesterId { get; set; }
+        public Semester? Semester { get; set; }
 
         public List<Instructor> Instructors { get; set; }
 

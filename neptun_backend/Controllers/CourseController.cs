@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using neptun_backend.Entities;
 using neptun_backend.Services;
 
 namespace neptun_backend.Controllers
@@ -17,7 +18,34 @@ namespace neptun_backend.Controllers
         [HttpGet]
         public IActionResult getAll()
         {
-            return Ok(courseService.getAll());
+            return Ok(courseService.GetAll());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] Course Course)
+        {
+            await courseService.Create(Course);
+            return Ok();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] Course Course)
+        {
+            await courseService.Update(Course);
+            return Ok();
+        }
+
+        [HttpDelete("{CourseId}")]
+        public async Task<IActionResult> Delete(int CourseId)
+        {
+            try
+            {
+                await courseService.Delete(CourseId);
+                return Ok();
+            } catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

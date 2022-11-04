@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using neptun_backend.Context;
 
@@ -11,9 +12,10 @@ using neptun_backend.Context;
 namespace neptun_backend.Migrations
 {
     [DbContext(typeof(NeptunBackendDbContext))]
-    partial class NeptunBackendDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221104102949_SemesterId foreign key")]
+    partial class SemesterIdforeignkey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -209,17 +211,12 @@ namespace neptun_backend.Migrations
             modelBuilder.Entity("neptun_backend.Entities.Course", b =>
                 {
                     b.HasOne("neptun_backend.Entities.Semester", "Semester")
-                        .WithMany("Courses")
+                        .WithMany()
                         .HasForeignKey("SemesterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Semester");
-                });
-
-            modelBuilder.Entity("neptun_backend.Entities.Semester", b =>
-                {
-                    b.Navigation("Courses");
                 });
 #pragma warning restore 612, 618
         }

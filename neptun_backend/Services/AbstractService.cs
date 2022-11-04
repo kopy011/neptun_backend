@@ -1,9 +1,18 @@
-﻿using neptun_backend.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using neptun_backend.Entities;
 using neptun_backend.UnitOfWork;
 
 namespace neptun_backend.Services
 {
-    public class AbstractService
+    public interface IAbstractService<TEntity> where TEntity : AbstractEntity
+    {
+        IEnumerable<TEntity> GetAll();
+        Task Create(TEntity Entity);
+        Task Update(TEntity Entity);
+        Task Delete(int EntityId);
+    }
+
+    public class AbstractService<TEntity> : IAbstractService<TEntity> where TEntity : AbstractEntity
     {
         protected IUnitOfWork unitOfWork;
 
@@ -11,5 +20,37 @@ namespace neptun_backend.Services
         {
             this.unitOfWork = unitOfWork;
         }
+
+        public IEnumerable<TEntity> GetAll()
+        {
+            return unitOfWork.GetRepository<TEntity>().GetAll();
+        }
+
+        public async Task Create(TEntity Entity)
+        {
+            await unitOfWork.GetRepository<TEntity>().Create(Entity);
+            await unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task Update(TEntity Entity)
+        {
+            unitOfWork.GetRepository<TEntity>().Update(Entity);
+            await unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task Delete(int EntityId)
+        {
+            TEntity entity = await unitOfWork.GetRepository<TEntity>().GetById(EntityId);
+
+            if (entity == null)
+            {
+                throw new Exception(typeof(TEntity).Name + " not found");
+            }
+
+            entity.isDeleted = true;
+            await unitOfWork.SaveChangesAsync();
+        }
+
+
     }
 }

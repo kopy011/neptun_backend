@@ -5,21 +5,15 @@ using neptun_backend.UnitOfWork;
 
 namespace neptun_backend.Services
 {
-    public interface ICourseService
+    public interface ICourseService : IAbstractService<Course>
     {
-        IEnumerable<Course> getAll();
     }
 
-    public class CourseService : AbstractService, ICourseService
+    public class CourseService : AbstractService<Course>, ICourseService
     {
 
         public CourseService(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-        }
-
-        public IEnumerable<Course> getAll()
-        {
-            return unitOfWork.GetRepository<Course>().GetAll().Include(c => c.Semester);
         }
     }
 }

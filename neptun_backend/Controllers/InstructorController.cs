@@ -28,24 +28,24 @@ namespace neptun_backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Instructor instructor)
+        public async Task<IActionResult> Create([FromBody] Instructor Instructor)
         {
-            await instructorService.Create(instructor);
+            await instructorService.Create(Instructor);
             return Ok();
         }
 
         [HttpPut]
-        public IActionResult Update([FromBody] Instructor instructor)
+        public IActionResult Update([FromBody] Instructor Instructor)
         {
-            return Ok(instructorService.Update(instructor));
+            return Ok(instructorService.Update(Instructor));
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete([FromQuery] int instructorId)
+        [HttpDelete("{InstructorId}")]
+        public async Task<IActionResult> Delete(int InstructorId)
         {
             try
             {
-                await instructorService.Delete(instructorId);
+                await instructorService.Delete(InstructorId);
                 return Ok();
             } catch (Exception ex)
             {

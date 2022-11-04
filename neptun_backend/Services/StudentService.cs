@@ -5,27 +5,39 @@ using neptun_backend.UnitOfWork;
 
 namespace neptun_backend.Services
 {
-    public interface IStudentService
+    public interface IStudentService : IAbstractService<Student>
     {
-        IEnumerable<Student> getAll();
-        IEnumerable<Course> getAllCourse(int studentId, int semesterId);
+        IEnumerable<Course> GetAllCourse(int StudentId, int SemesterId);
+        Task TakeACourse(int StudentId, int CourseId);
     }
 
-    public class StudentService : AbstractService, IStudentService
+    public class StudentService : AbstractService<Student>, IStudentService
     {
 
         public StudentService(IUnitOfWork unitOfWork) : base(unitOfWork) 
         {
         }
 
-        public IEnumerable<Student> getAll()
+        public IEnumerable<Course> GetAllCourse(int StudentId, int SemesterId)
         {
-            return unitOfWork.GetRepository<Student>().GetAll();
+            return unitOfWork.GetRepository<Student>().GetAll().Include(s => s.Courses.Where(c => c.Semester.Id == SemesterId)).Where(s => s.Id == StudentId).FirstOrDefault()?.Courses ?? new List<Course>();
         }
 
-        public IEnumerable<Course> getAllCourse(int studentId, int semesterId)
+        public async Task TakeACourse(int StudentId, int CourseId)
         {
-            return unitOfWork.GetRepository<Student>().GetAll().Include(s => s.Courses.Where(c => c.Semester.Id == semesterId)).Where(s => s.Id == studentId).FirstOrDefault()?.Courses ?? new List<Course>();
+            var student = unitOfWork.GetRepository<Student>().GetAll(tracking: true).Include(i => i.Courses).FirstOrDefault(i => i.Id == StudentId)
+                ?? throw new Exception("Student not found!");
+            var course = unitOfWork.GetRepository<Course>().GetAll(tracking: true).Include(c => c.Students).FirstOrDefault(c => c.Id == CourseId)
+                ?? throw new Exception("Course not found!");
+
+            if (student.Courses.Contains(course))
+            {
+                throw new Exception("Student already attends the given course!");
+            }
+
+            course.Students.Add(student);
+
+            await unitOfWork.SaveChangesAsync();
         }
     }
 }

@@ -4,20 +4,14 @@ using neptun_backend.UnitOfWork;
 
 namespace neptun_backend.Services
 {
-    public interface ISemesterService
+    public interface ISemesterService: IAbstractService<Semester>
     {
-        IEnumerable<Semester> getAll();
     }
 
-    public class SemesterService : AbstractService, ISemesterService
+    public class SemesterService : AbstractService<Semester>, ISemesterService
     {
         public SemesterService(IUnitOfWork unitOfWork): base(unitOfWork)
         {
-        }
-
-        public IEnumerable<Semester> getAll()
-        {
-            return unitOfWork.GetRepository<Semester>().GetAll();
         }
     }
 }
