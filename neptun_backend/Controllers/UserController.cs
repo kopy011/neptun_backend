@@ -32,6 +32,28 @@ namespace neptun_backend.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
+        {
+            try
+            {
+                var result = await _userService.Login(loginRequest);
+                return Ok(result);
+            } catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _userService.Logout();
+            return Ok();
+        }
+
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
         {

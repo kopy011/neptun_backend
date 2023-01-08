@@ -83,7 +83,7 @@ namespace neptun_backend.Services
 
         private JwtSecurityToken GenerateJwtToken(List<Claim> authClaims)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Password_123"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret_Key_12345"));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddDays(Convert.ToDouble(30));
 
