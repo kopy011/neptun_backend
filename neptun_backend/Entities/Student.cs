@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace neptun_backend.Entities
 {
-    public class Student : AbstractEntity
+    public class Student : Person
     {
         public enum MajorType
         {
@@ -13,15 +13,7 @@ namespace neptun_backend.Entities
             programtervezőinformatikusBsc,
             gazdaságinformatikusBsc
         }
-
-        public string NeptunCode { get; set; }
-
-        public string Name { get; set; }
-
-        public string Email { get; set; }
-
         public MajorType Major { get; set; }
-
         public List<Course> Courses { get; set; }
     }
 }

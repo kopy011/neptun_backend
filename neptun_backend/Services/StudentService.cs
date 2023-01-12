@@ -22,7 +22,7 @@ namespace neptun_backend.Services
         {
             return unitOfWork.GetRepository<Student>().GetAll(ignoreFilters: IgnoreFilters)
                 .Include(s => s.Courses.Where(c => c.Semester.Id == SemesterId))
-                .Where(s => s.Id == StudentId).FirstOrDefault()?.Courses 
+                .FirstOrDefault(s => s.Id == StudentId)?.Courses 
                 ?? new List<Course>();
         }
 

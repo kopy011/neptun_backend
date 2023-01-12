@@ -27,7 +27,7 @@ namespace neptun_backend.Services
         {
             return unitOfWork.GetRepository<Instructor>().GetAll(ignoreFilters: IgnoreFilters)
                 .Include(i => i.Courses.Where(c => c.Semester.Id == SemesterId))
-                .Where(i => i.Id == InstructorId).FirstOrDefault()?.Courses
+                .FirstOrDefault(i => i.Id == InstructorId)?.Courses
                 ?? new List<Course>();
         }
 
@@ -35,7 +35,6 @@ namespace neptun_backend.Services
         {
             var courseIds = from course in GetAllCourse(InstructorId, SemesterId, IgnoreFilters: true) select course.Id;
             var coursesWithStudents = unitOfWork.GetRepository<Course>().GetAll(ignoreFilters: true).Include(c => c.Students).Where(c => courseIds.Any(cId => cId == c.Id));
-            Console.WriteLine(coursesWithStudents.Count());
             List<InstructorStudentsDTO> students = new List<InstructorStudentsDTO>();
             
             foreach(var course in coursesWithStudents)

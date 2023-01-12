@@ -26,6 +26,7 @@ namespace neptun_backend.Context
             modelBuilder.Entity<Instructor>().HasQueryFilter(i => !i.isDeleted).HasIndex(i => i.NeptunCode).IsUnique();
             modelBuilder.Entity<Semester>().HasQueryFilter(s => !s.isDeleted);
             modelBuilder.Entity<Student>().HasQueryFilter(s => !s.isDeleted).HasIndex(s => s.NeptunCode).IsUnique();
+            modelBuilder.Entity<ApplicationUser>().HasIndex(u => u.NeptunCode).IsUnique();
 
             modelBuilder.Entity<Course>().Property(c => c.ScheduleInformation).HasDefaultValue("ismeretlen");
         }

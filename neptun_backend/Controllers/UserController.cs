@@ -66,5 +66,18 @@ namespace neptun_backend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPut("alter-role/{InstructorId}")]
+        public async Task<IActionResult> AlterRole(int InstructorId, [FromBody] List<string> roles)
+        {
+            try
+            {
+                await _userService.AlterRole(InstructorId, roles);
+                return Ok();
+            } catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

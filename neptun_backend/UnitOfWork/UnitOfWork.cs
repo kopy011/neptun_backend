@@ -72,9 +72,9 @@ namespace neptun_backend.UnitOfWork
             {
                 int count = _context.SaveChanges();
                 return count;
-            } catch(Exception ex)
+            } catch
             {
-                throw ex;
+                throw;
             }
         }
 

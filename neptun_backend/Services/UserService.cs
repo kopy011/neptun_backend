@@ -17,7 +17,7 @@ namespace neptun_backend.Services
         Task InitRoles();
         Task Logout();
         Task Register(RegisterRequest registerRequest);
-
+        Task AlterRole(int InstructorId, List<string> roles);
     }
 
     public class UserService : IUserService
@@ -152,6 +152,60 @@ namespace neptun_backend.Services
             }
         }
 
+        public async Task AlterRole(int userId, List<string> roles)
+        {
+            if(roles.Count == 0)
+            {
+                throw new Exception("At least is one role is mandatory!");
+            }
+
+            if(roles.Any(r => !Roles.isValidRole(r)))
+            {
+                throw new Exception("Invalid role!");
+            }
+
+            ApplicationUser? applicationUser = _userManager.Users.FirstOrDefault(u => u.Id == userId);
+            if(applicationUser == null)
+            {
+                throw new Exception("User not found with the given Id!");
+            }
+
+            //reset role related data of the user
+            applicationUser.InstructorId = applicationUser.StudentId = null;
+            var claims = await _userManager.GetClaimsAsync(applicationUser);
+            foreach(var claim in claims)
+            {
+                await _userManager.RemoveFromRoleAsync(applicationUser, claim.Value);
+                await _userManager.RemoveClaimAsync(applicationUser, claim);
+            }
+
+            foreach(var role in roles)
+            {
+                if(role == Roles.INSTRUCTOR)
+                {
+                    applicationUser.InstructorId = _instructorService.GetAll().FirstOrDefault(i => i.NeptunCode == applicationUser.NeptunCode)?.Id;
+                    if(applicationUser.InstructorId == null)
+                    {
+                        throw new Exception("No instructor found with the user's neptunCode!");
+                    }
+                }
+
+                if(role == Roles.STUDENT)
+                {
+                    applicationUser.StudentId = _studentService.GetAll().FirstOrDefault(s => s.NeptunCode == applicationUser.NeptunCode)?.Id;
+                    if (applicationUser.StudentId == null)
+                    {
+                        throw new Exception("No student found with the user's neptunCode!");
+                    }
+                }
+
+                await _userManager.AddClaimAsync(applicationUser, new Claim(ClaimTypes.Role, role));
+                await _userManager.AddToRoleAsync(applicationUser, role);
+            }
+
+            await _userManager.UpdateAsync(applicationUser);
+        }
+
         public async Task InitUsers()
         {
             const string samplePassword = "QweDsa_123";
@@ -167,7 +221,6 @@ namespace neptun_backend.Services
             const string email = "sample@gmail.com";
 
             //first we need to create an Instructor and a Student for both Student and Instructor users if we dont have any
-
             var student = _studentService.GetAll().FirstOrDefault(s => s.NeptunCode == testStudentNeptunCode);
             if (student == null)
             {
