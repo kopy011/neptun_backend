@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using neptun_backend.Context;
 using neptun_backend.DTOS;
 using neptun_backend.Entities;
@@ -9,26 +10,16 @@ using System.Transactions;
 
 namespace neptun_backend.Services
 {
-    public interface IInstructorService : IAbstractService<Instructor>
+    public interface IInstructorService : IPersonService<Instructor>
     {
-        IEnumerable<Course> GetAllCourse(int InstructorId, int SemesterId, bool IgnoreFilters = false);
-        Task TakeACourse(int InstructorId, int CourseId);
         IEnumerable<InstructorStudentsDTO> GetAllStudents(int InstructorId, int SemesterId);
         public IEnumerable<StatPerSemesterDTO> GetSemesterStatistics(int InstructorId);
     }
 
-    public class InstructorService : AbstractService<Instructor>, IInstructorService
+    public class InstructorService : PersonService<Instructor>, IInstructorService
     {
-        public InstructorService(IUnitOfWork unitOfWork): base(unitOfWork)
+        public InstructorService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager): base(unitOfWork, userManager)
         {
-        }
-
-        public IEnumerable<Course> GetAllCourse(int InstructorId, int SemesterId, bool IgnoreFilters = false)
-        {
-            return unitOfWork.GetRepository<Instructor>().GetAll(ignoreFilters: IgnoreFilters)
-                .Include(i => i.Courses.Where(c => c.Semester.Id == SemesterId))
-                .FirstOrDefault(i => i.Id == InstructorId)?.Courses
-                ?? new List<Course>();
         }
 
         public IEnumerable<InstructorStudentsDTO> GetAllStudents(int InstructorId, int SemesterId)
@@ -51,23 +42,6 @@ namespace neptun_backend.Services
             }
 
             return students.OrderBy(s => s.CourseCode).ThenBy(s => s.Name);
-        }
-
-        public async Task TakeACourse(int InstructorId, int CourseId)
-        {
-            var instructor = unitOfWork.GetRepository<Instructor>().GetAll(tracking: true).Include(i => i.Courses).FirstOrDefault(i => i.Id == InstructorId)
-                ?? throw new Exception("Instructor not found!");
-            var course = unitOfWork.GetRepository<Course>().GetAll(tracking: true).Include(c => c.Instructors).FirstOrDefault(c => c.Id == CourseId)
-                ?? throw new Exception("Course not found!");
-
-            if (instructor.Courses.Contains(course))
-            {
-                throw new Exception("Instructor already instructs in the given course!");
-            }
-
-            course.Instructors.Add(instructor);
-
-            await unitOfWork.SaveChangesAsync();
         }
 
         public IEnumerable<StatPerSemesterDTO> GetSemesterStatistics(int InstructorId)

@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using neptun_backend.Entities;
 using neptun_backend.Services;
+using neptun_backend.Utils;
 
 namespace neptun_backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, Instructor, Student")]
     public class CourseController : Controller
     {
         private readonly ICourseService courseService;
@@ -21,6 +25,7 @@ namespace neptun_backend.Controllers
             return Ok(courseService.GetAll(IgnoreFilters));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Course Course)
         {
@@ -28,6 +33,7 @@ namespace neptun_backend.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] Course Course)
         {
@@ -35,6 +41,7 @@ namespace neptun_backend.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{CourseId}")]
         public async Task<IActionResult> Delete(int CourseId)
         {
@@ -52,6 +59,13 @@ namespace neptun_backend.Controllers
         public IActionResult getCoursesByDates(DateTime StartDate, DateTime EndDate, bool IgnoreFilters = false)
         {
             return Ok(courseService.getCoursesByDates(StartDate, EndDate, IgnoreFilters));
+        }
+
+        [Authorize(Roles = "Student, Instructor", Policy= "ActivePersonOnly")]
+        [HttpGet("get/hard")]
+        public IActionResult getHardCourses()
+        {
+            return Ok(courseService.getHardCourses());
         }
     }
 }

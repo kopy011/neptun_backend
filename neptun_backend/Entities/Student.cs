@@ -14,6 +14,5 @@ namespace neptun_backend.Entities
             gazdaságinformatikusBsc
         }
         public MajorType Major { get; set; }
-        public List<Course> Courses { get; set; }
     }
 }

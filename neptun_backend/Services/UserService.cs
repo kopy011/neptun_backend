@@ -28,19 +28,15 @@ namespace neptun_backend.Services
         private readonly IStudentService _studentService;
         private readonly IInstructorService _instructorService;
 
-        private readonly IUnitOfWork _unitOfWork;
-
         public UserService( RoleManager<IdentityRole<int>> roleManager,
                             UserManager<ApplicationUser> userManager,
                             SignInManager<ApplicationUser> signInManager,
-                            IUnitOfWork unitOfWork,
                             IStudentService studentService,
                             IInstructorService instructorService)
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _signInManager = signInManager;
-            _unitOfWork = unitOfWork;
             _studentService = studentService;
             _instructorService = instructorService;
         }
@@ -168,6 +164,9 @@ namespace neptun_backend.Services
             if(applicationUser == null)
             {
                 throw new Exception("User not found with the given Id!");
+            } else if (applicationUser.isDeleted)
+            {
+                throw new Exception("Cannot modify a deleted user!");
             }
 
             //reset role related data of the user

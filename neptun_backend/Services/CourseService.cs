@@ -8,6 +8,7 @@ namespace neptun_backend.Services
     public interface ICourseService : IAbstractService<Course>
     {
         public IEnumerable<Course> getCoursesByDates(DateTime startDate, DateTime endDate, bool ignoreFilters = false);
+        public IEnumerable<Course> getHardCourses();
     }
 
     public class CourseService : AbstractService<Course>, ICourseService
@@ -34,6 +35,11 @@ namespace neptun_backend.Services
         public IEnumerable<Course> getCoursesByDates(DateTime startDate, DateTime endDate, bool ignoreFilters = false)
         {
             return courseUnitOfWork.GetCoursesByDates(startDate, endDate, ignoreFilters);
+        }
+
+        public IEnumerable<Course> getHardCourses()
+        {
+            return unitOfWork.GetRepository<Course>().GetAll().Include(c => c.Instructors).Where(c => c.Credit >= 4);
         }
     }
 }

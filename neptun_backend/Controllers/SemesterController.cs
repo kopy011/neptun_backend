@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using neptun_backend.Entities;
 using neptun_backend.Services;
+using neptun_backend.Utils;
 
 namespace neptun_backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, Instructor, Student")]
     public class SemesterController : Controller
     {
         private readonly ISemesterService semesterService;
@@ -21,6 +25,7 @@ namespace neptun_backend.Controllers
             return Ok(semesterService.GetAll(IgnoreFilters));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Semester Semester)
         {
@@ -28,6 +33,7 @@ namespace neptun_backend.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] Semester Semester) 
         {
@@ -35,6 +41,7 @@ namespace neptun_backend.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{SemesterId}")]
         public async Task<IActionResult> Delete(int SemesterId)
         {

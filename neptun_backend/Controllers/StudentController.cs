@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using neptun_backend.Entities;
 using neptun_backend.Services;
+using neptun_backend.Utils;
 
 namespace neptun_backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin, Instructor, Student")]
     public class StudentController : Controller
     {
         private readonly IStudentService studentService;
@@ -27,7 +31,7 @@ namespace neptun_backend.Controllers
             return Ok(studentService.GetAllCourse(StudentId, SemesterId, IgnoreFilters));
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Student Student)
         {
@@ -35,6 +39,7 @@ namespace neptun_backend.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] Student Student)
         {
@@ -42,6 +47,7 @@ namespace neptun_backend.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{StudentId}")]
         public async Task<IActionResult> Delete(int StudentId)
         {
@@ -56,6 +62,7 @@ namespace neptun_backend.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("take/{StudentId}/{CourseId}")]
         public async Task<IActionResult> Take(int StudentId, int CourseId)
         {

@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using neptun_backend.Context;
 using neptun_backend.Entities;
+using neptun_backend.Policy;
 using neptun_backend.Services;
 using neptun_backend.UnitOfWork;
+using System.Security.Cryptography;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,15 +27,17 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
                 .AddEntityFrameworkStores<NeptunBackendDbContext>()
                 .AddDefaultTokenProviders();
 
+builder.Services.AddSingleton<IAuthorizationHandler, ActivePersonAuthorizationHandler>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = "Bearer";
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
     .AddJwtBearer(cfg =>
     {
-        cfg.RequireHttpsMetadata = false;
-        cfg.SaveToken = true;
         cfg.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -41,13 +45,14 @@ builder.Services.AddAuthentication(options =>
             ValidateAudience = true,
             ValidAudience = "https://mik.uni-pannon.hu",
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Secret_Key_12345")),
-            ValidateIssuerSigningKey = true,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero // remove delay of token when expire
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ActivePersonOnly",
+       policy => policy.Requirements.Add(new ActivePersonOnlyPolicy()));
+});
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork<NeptunBackendDbContext>>();
 builder.Services.AddScoped<ICourseUnitOfWork, CourseUnitOfWork<NeptunBackendDbContext>>();
@@ -79,6 +84,7 @@ app.UseRouting();
 
 app.MapControllers();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();

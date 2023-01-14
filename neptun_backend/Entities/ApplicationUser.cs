@@ -13,5 +13,6 @@ namespace neptun_backend.Entities
         public string Department { get; set; }
         public int? StudentId{ get; set; }
         public int? InstructorId { get; set; }
+        public bool isDeleted { get; set; } = false;
     }
 }

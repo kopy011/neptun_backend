@@ -16,6 +16,5 @@ namespace neptun_backend.Entities
             egyéb
         }
         public ClassificationType Classification { get; set; }
-        public List<Course> Courses { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using neptun_backend.DTOS.ApplicationUserDTOS;
 using neptun_backend.Services;
@@ -7,6 +8,7 @@ namespace neptun_backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles ="Admin")]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -67,6 +69,7 @@ namespace neptun_backend.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("alter-role/{InstructorId}")]
         public async Task<IActionResult> AlterRole(int InstructorId, [FromBody] List<string> roles)
         {

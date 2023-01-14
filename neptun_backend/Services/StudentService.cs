@@ -1,46 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using neptun_backend.Context;
 using neptun_backend.Entities;
 using neptun_backend.UnitOfWork;
 
 namespace neptun_backend.Services
 {
-    public interface IStudentService : IAbstractService<Student>
+    public interface IStudentService : IPersonService<Student>
     {
-        IEnumerable<Course> GetAllCourse(int StudentId, int SemesterId, bool IgnoreFilters = false);
-        Task TakeACourse(int StudentId, int CourseId);
     }
 
-    public class StudentService : AbstractService<Student>, IStudentService
+    public class StudentService : PersonService<Student>, IStudentService
     {
-
-        public StudentService(IUnitOfWork unitOfWork) : base(unitOfWork) 
+        public StudentService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : base(unitOfWork, userManager) 
         {
-        }
-
-        public IEnumerable<Course> GetAllCourse(int StudentId, int SemesterId, bool IgnoreFilters = false)
-        {
-            return unitOfWork.GetRepository<Student>().GetAll(ignoreFilters: IgnoreFilters)
-                .Include(s => s.Courses.Where(c => c.Semester.Id == SemesterId))
-                .FirstOrDefault(s => s.Id == StudentId)?.Courses 
-                ?? new List<Course>();
-        }
-
-        public async Task TakeACourse(int StudentId, int CourseId)
-        {
-            var student = unitOfWork.GetRepository<Student>().GetAll(tracking: true).Include(i => i.Courses).FirstOrDefault(i => i.Id == StudentId)
-                ?? throw new Exception("Student not found!");
-            var course = unitOfWork.GetRepository<Course>().GetAll(tracking: true).Include(c => c.Students).FirstOrDefault(c => c.Id == CourseId)
-                ?? throw new Exception("Course not found!");
-
-            if (student.Courses.Contains(course))
-            {
-                throw new Exception("Student already attends the given course!");
-            }
-
-            course.Students.Add(student);
-
-            await unitOfWork.SaveChangesAsync();
         }
     }
 }

@@ -38,7 +38,7 @@ namespace neptun_backend.Services
             await unitOfWork.SaveChangesAsync();
         }
 
-        public async Task Delete(int EntityId)
+        public virtual async Task Delete(int EntityId)
         {
             TEntity entity = await unitOfWork.GetRepository<TEntity>().GetById(EntityId);
 
