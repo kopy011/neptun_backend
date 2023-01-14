@@ -2,6 +2,7 @@
 {
     public class UserClaims
     {
-        public static string ISDELETED = "User is logically deleted";
+        public static string ISDELETED = "IsDeleted";
+        public static string NEPTUNCODE = "NeptunCode";
     }
 }

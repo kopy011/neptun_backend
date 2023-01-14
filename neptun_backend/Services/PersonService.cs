@@ -62,7 +62,16 @@ namespace neptun_backend.Services
             if(user != null)
             {
                 user.isDeleted = true;
-                await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.UserData, UserClaims.ISDELETED));
+                var userClaims = await _userManager.GetClaimsAsync(user);
+                var isDeletedClaim = userClaims.FirstOrDefault(c => c.Type == UserClaims.ISDELETED);
+                if(isDeletedClaim is null)
+                {
+                    await _userManager.AddClaimAsync(user, new Claim(UserClaims.ISDELETED, "True"));
+                }
+                else
+                {
+                    await _userManager.ReplaceClaimAsync(user, isDeletedClaim, new Claim(UserClaims.ISDELETED, "True"));
+                }
                 await _userManager.UpdateAsync(user);
             }
 

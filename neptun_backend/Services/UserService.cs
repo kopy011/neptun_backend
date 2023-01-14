@@ -144,7 +144,12 @@ namespace neptun_backend.Services
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(applicationUser, registerRequest.Role);
-                await _userManager.AddClaimAsync(applicationUser, new Claim(ClaimTypes.Role, registerRequest.Role));
+                await _userManager.AddClaimsAsync(applicationUser, new Claim[] { new Claim(ClaimTypes.Role, registerRequest.Role), new Claim(UserClaims.ISDELETED, "False")});
+
+                if(registerRequest.Role == Roles.STUDENT)
+                {
+                    await _userManager.AddClaimAsync(applicationUser, new Claim(UserClaims.NEPTUNCODE, applicationUser.NeptunCode));
+                }
             }
         }
 
