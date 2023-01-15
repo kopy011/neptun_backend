@@ -54,7 +54,10 @@ namespace neptun_backend.Services
                     var authClaims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, applicationUser.UserName),
-                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(ClaimTypes.NameIdentifier, applicationUser.Id.ToString()),
+                        new Claim(UserClaims.ISDELETED, applicationUser.isDeleted.ToString()),
+                        new Claim(UserClaims.NEPTUNCODE, applicationUser.NeptunCode)
                     };
 
                     foreach( var userRole in userRoles)
@@ -144,12 +147,6 @@ namespace neptun_backend.Services
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(applicationUser, registerRequest.Role);
-                await _userManager.AddClaimsAsync(applicationUser, new Claim[] { new Claim(ClaimTypes.Role, registerRequest.Role), new Claim(UserClaims.ISDELETED, "False")});
-
-                if(registerRequest.Role == Roles.STUDENT)
-                {
-                    await _userManager.AddClaimAsync(applicationUser, new Claim(UserClaims.NEPTUNCODE, applicationUser.NeptunCode));
-                }
             }
         }
 
@@ -176,13 +173,6 @@ namespace neptun_backend.Services
 
             //reset role related data of the user
             applicationUser.InstructorId = applicationUser.StudentId = null;
-            var claims = await _userManager.GetClaimsAsync(applicationUser);
-            foreach(var claim in claims)
-            {
-                await _userManager.RemoveFromRoleAsync(applicationUser, claim.Value);
-                await _userManager.RemoveClaimAsync(applicationUser, claim);
-            }
-
             foreach(var role in roles)
             {
                 if(role == Roles.INSTRUCTOR)
@@ -202,8 +192,6 @@ namespace neptun_backend.Services
                         throw new Exception("No student found with the user's neptunCode!");
                     }
                 }
-
-                await _userManager.AddClaimAsync(applicationUser, new Claim(ClaimTypes.Role, role));
                 await _userManager.AddToRoleAsync(applicationUser, role);
             }
 

@@ -75,8 +75,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseMiddleware<RequestResultMiddleware>();
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -86,6 +84,9 @@ app.MapControllers();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<RequestResultMiddleware>();
+app.UseMiddleware<LoggingMiddleware>();
 
 app.MapRazorPages();
 

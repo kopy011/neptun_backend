@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "9fBIgApHBSQ1TjJK4gYHraUEivk1icX8fH0mOxInwTV36aPBlKs5ozukrnNOJzb0mQyprTmjoMcHDcfaBu55tQ==",
+  "dgSpecHash": "4EaqPLeu4slXMMK8p+0u3jiRWfoKEef/1ZZrNpJlSNOkz63E8omlvg25Nvg0ODEeXl3mrhg3eLN+kJOPM9JtOQ==",
   "success": true,
   "projectFilePath": "D:\\Programok\\.NET\\neptun_backend\\neptun_backend\\neptun_backend.csproj",
   "expectedPackageFiles": [
@@ -38,6 +38,7 @@
     "C:\\Users\\kopyk\\.nuget\\packages\\microsoft.identitymodel.protocols\\6.10.0\\microsoft.identitymodel.protocols.6.10.0.nupkg.sha512",
     "C:\\Users\\kopyk\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\6.10.0\\microsoft.identitymodel.protocols.openidconnect.6.10.0.nupkg.sha512",
     "C:\\Users\\kopyk\\.nuget\\packages\\microsoft.identitymodel.tokens\\6.10.0\\microsoft.identitymodel.tokens.6.10.0.nupkg.sha512",
+    "C:\\Users\\kopyk\\.nuget\\packages\\microsoft.io.recyclablememorystream\\2.2.1\\microsoft.io.recyclablememorystream.2.2.1.nupkg.sha512",
     "C:\\Users\\kopyk\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\kopyk\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\kopyk\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",

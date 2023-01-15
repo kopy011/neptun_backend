@@ -141,3 +141,4 @@ D:\Programok\.NET\neptun_backend\neptun_backend\obj\Debug\net6.0\staticwebassets
 D:\Programok\.NET\neptun_backend\neptun_backend\obj\Debug\net6.0\staticwebassets\msbuild.buildTransitive.neptun_backend.props
 D:\Programok\.NET\neptun_backend\neptun_backend\obj\Debug\net6.0\staticwebassets.pack.json
 D:\Programok\.NET\neptun_backend\neptun_backend\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Programok\.NET\neptun_backend\neptun_backend\bin\Debug\net6.0\Microsoft.IO.RecyclableMemoryStream.dll

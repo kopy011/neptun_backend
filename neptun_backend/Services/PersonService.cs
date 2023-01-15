@@ -39,7 +39,7 @@ namespace neptun_backend.Services
 
             if (person.Courses.Contains(course))
             {
-                throw new Exception(person.GetType().ToString() + " already instructs in the given course!");
+                throw new Exception(person.GetType().ToString().Split('.').Last() + " already has the course!");
             }
 
             person.Courses.Add(course);
@@ -62,16 +62,6 @@ namespace neptun_backend.Services
             if(user != null)
             {
                 user.isDeleted = true;
-                var userClaims = await _userManager.GetClaimsAsync(user);
-                var isDeletedClaim = userClaims.FirstOrDefault(c => c.Type == UserClaims.ISDELETED);
-                if(isDeletedClaim is null)
-                {
-                    await _userManager.AddClaimAsync(user, new Claim(UserClaims.ISDELETED, "True"));
-                }
-                else
-                {
-                    await _userManager.ReplaceClaimAsync(user, isDeletedClaim, new Claim(UserClaims.ISDELETED, "True"));
-                }
                 await _userManager.UpdateAsync(user);
             }
 
