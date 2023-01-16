@@ -16,7 +16,7 @@ namespace neptun_backend.Middleware
         {
             _next = next;
         }
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context, ICourseService _courseService)
         {
             if (context.Request.Path.Value.Contains("/api/user/alter-role"))
             {
@@ -39,7 +39,7 @@ namespace neptun_backend.Middleware
             await _next(context);
 
             //convert the respone to correct form
-            var resultJson = await CreateResponseJson(context, response, isStudent, neptunCode);
+            var resultJson = await CreateResponseJson(context, response, _courseService, isStudent, neptunCode);
             byte[] resultByteArray = Encoding.UTF8.GetBytes(resultJson.ToString());
 
             //set response options
@@ -58,12 +58,14 @@ namespace neptun_backend.Middleware
             return stream;
         }
 
-        private async Task<JObject> CreateResponseJson(HttpContext context, HttpResponse response, bool isStudent, string neptunCode)
+        private async Task<JObject> CreateResponseJson(HttpContext context, HttpResponse response, ICourseService _courseService, bool isStudent, string neptunCode)
         {
             var responseBodyContent = await GetResponseBodyContent(response);
+            var content = IsStudentCourseRequest(context, isStudent, neptunCode) ? JToken.Parse(await GetSerializedFilteredCourses(context, _courseService, neptunCode))
+                : string.IsNullOrEmpty(responseBodyContent) ? "" : JToken.Parse(responseBodyContent);
             try
             {
-                var content = IsStudentCourseRequest(context, isStudent, neptunCode) ? await GetSerializedFilteredCourses(context, neptunCode) : JToken.Parse(responseBodyContent);
+
 
                 JObject resultJson = new JObject
                 {
@@ -85,15 +87,22 @@ namespace neptun_backend.Middleware
             }
         }
 
-        private async Task<string> GetSerializedFilteredCourses(HttpContext context, string neptunCode)
+        private async Task<string> GetSerializedFilteredCourses(HttpContext context, ICourseService _courseService, string neptunCode)
         {
-            //szarul szűri le mert nem inculodja a kurva course-okat szóval lehet kellene a course-service és valahogy úgy megoldani a szűrést főnemesem
-            //talán ha lenne egy courseService fv ami megcsinálja a filtert az gecijó lenne
-
             var coursesStr = await GetResponseBodyContent(context.Response);
             var courses = JsonConvert.DeserializeObject<IList<Course>>(coursesStr);
-            var filteredCourses = courses.Where(course => course.Students != null && course.Students.Any(s => s.NeptunCode == neptunCode)).ToList();
-            return filteredCourses.Count == 0 ? "" : JsonConvert.SerializeObject(courses);
+            var courseIds = new List<int>();
+            foreach(var course in courses)
+            {
+                courseIds.Add(course.Id);
+            }
+            var filteredCourses = _courseService.getCoursesByNeptunCode(courseIds, neptunCode).ToList();
+            foreach(var course in filteredCourses)
+            {
+                Console.WriteLine(course.Name);
+            }
+            return filteredCourses.Count == 0 ? "" : JsonConvert.SerializeObject(filteredCourses, Formatting.None,
+                new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
         }
 
         private bool IsStudentCourseRequest(HttpContext context, bool isStudent, string neptunCode)

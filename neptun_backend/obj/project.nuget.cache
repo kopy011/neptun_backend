@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "4EaqPLeu4slXMMK8p+0u3jiRWfoKEef/1ZZrNpJlSNOkz63E8omlvg25Nvg0ODEeXl3mrhg3eLN+kJOPM9JtOQ==",
+  "dgSpecHash": "J9YhQzVvi0NL0HDYyvk/hslWPXStTLCnbncHyPu6dyfoQpNwxA+iwmf5rpL5gU/7k2Wg42IeYhD8aOSPdhc/VQ==",
   "success": true,
-  "projectFilePath": "D:\\Programok\\.NET\\neptun_backend\\neptun_backend\\neptun_backend.csproj",
+  "projectFilePath": "C:\\Users\\kopyk\\source\\repos\\kopy011\\neptun_backend\\neptun_backend\\neptun_backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kopyk\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\kopyk\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.10\\microsoft.aspnetcore.authentication.jwtbearer.6.0.10.nupkg.sha512",
