@@ -24,7 +24,7 @@ namespace neptun_backend.Services
 
         public IEnumerable<Course> GetAllCourse(int PersonId, int SemesterId, bool IgnoreFilters = false)
         {
-            return unitOfWork.GetRepository<TEntity>().GetAll(ignoreFilters: IgnoreFilters)
+            return _unitOfWork.GetRepository<TEntity>().GetAll(ignoreFilters: IgnoreFilters)
           .Include(i => i.Courses.Where(c => c.Semester.Id == SemesterId))
           .FirstOrDefault(i => i.Id == PersonId)?.Courses
           ?? new List<Course>();
@@ -32,9 +32,9 @@ namespace neptun_backend.Services
 
         public async Task TakeACourse(int PersonId, int CourseId)
         {
-            var person = unitOfWork.GetRepository<TEntity>().GetAll(tracking: true).Include(i => i.Courses).FirstOrDefault(i => i.Id == PersonId)
+            var person = _unitOfWork.GetRepository<TEntity>().GetAll(tracking: true).Include(i => i.Courses).FirstOrDefault(i => i.Id == PersonId)
                 ?? throw new Exception("Person not found!");
-            var course = unitOfWork.GetRepository<Course>().GetAll(tracking: true).Include(c => c.Instructors).FirstOrDefault(c => c.Id == CourseId)
+            var course = _unitOfWork.GetRepository<Course>().GetAll(tracking: true).Include(c => c.Instructors).FirstOrDefault(c => c.Id == CourseId)
                 ?? throw new Exception("Course not found!");
 
             if (person.Courses.Contains(course))
@@ -44,12 +44,12 @@ namespace neptun_backend.Services
 
             person.Courses.Add(course);
 
-            await unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public override async Task Delete(int PersonId)
         {
-            var person = await unitOfWork.GetRepository<TEntity>().GetById(PersonId);
+            var person = await _unitOfWork.GetRepository<TEntity>().GetById(PersonId);
 
             if(person == null)
             {

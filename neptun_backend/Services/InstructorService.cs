@@ -25,7 +25,7 @@ namespace neptun_backend.Services
         public IEnumerable<InstructorStudentsDTO> GetAllStudents(int InstructorId, int SemesterId)
         {
             var courseIds = from course in GetAllCourse(InstructorId, SemesterId, IgnoreFilters: true) select course.Id;
-            var coursesWithStudents = unitOfWork.GetRepository<Course>().GetAll(ignoreFilters: true).Include(c => c.Students).Where(c => courseIds.Any(cId => cId == c.Id));
+            var coursesWithStudents = _unitOfWork.GetRepository<Course>().GetAll(ignoreFilters: true).Include(c => c.Students).Where(c => courseIds.Any(cId => cId == c.Id));
             List<InstructorStudentsDTO> students = new List<InstructorStudentsDTO>();
             
             foreach(var course in coursesWithStudents)
@@ -46,7 +46,7 @@ namespace neptun_backend.Services
 
         public IEnumerable<StatPerSemesterDTO> GetSemesterStatistics(int InstructorId)
         {
-            var semesterIds = from semester in unitOfWork.GetRepository<Semester>().GetAll(ignoreFilters: true) select semester.Id;
+            var semesterIds = from semester in _unitOfWork.GetRepository<Semester>().GetAll(ignoreFilters: true) select semester.Id;
             List<StatPerSemesterDTO> SemesterStatistics = new List<StatPerSemesterDTO>();
             
             foreach(var sId in semesterIds)

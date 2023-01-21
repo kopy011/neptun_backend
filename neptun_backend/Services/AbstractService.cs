@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using neptun_backend.Entities;
 using neptun_backend.UnitOfWork;
 
@@ -14,33 +15,33 @@ namespace neptun_backend.Services
 
     public class AbstractService<TEntity> : IAbstractService<TEntity> where TEntity : AbstractEntity
     {
-        protected IUnitOfWork unitOfWork;
+        protected readonly IUnitOfWork _unitOfWork;
 
         public AbstractService(IUnitOfWork unitOfWork)
         {
-            this.unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
-        public IEnumerable<TEntity> GetAll(bool IgnoreFilters = false)
+        public virtual IEnumerable<TEntity> GetAll(bool IgnoreFilters = false)
         {
-            return unitOfWork.GetRepository<TEntity>().GetAll(ignoreFilters: IgnoreFilters);
+            return _unitOfWork.GetRepository<TEntity>().GetAll(ignoreFilters: IgnoreFilters);
         }
 
         public async Task Create(TEntity Entity)
         {
-            await unitOfWork.GetRepository<TEntity>().Create(Entity);
-            await unitOfWork.SaveChangesAsync();
+            await _unitOfWork.GetRepository<TEntity>().Create(Entity);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public virtual async Task Update(TEntity Entity)
         {
-            unitOfWork.GetRepository<TEntity>().Update(Entity);
-            await unitOfWork.SaveChangesAsync();
+            _unitOfWork.GetRepository<TEntity>().Update(Entity);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public virtual async Task Delete(int EntityId)
         {
-            TEntity entity = await unitOfWork.GetRepository<TEntity>().GetById(EntityId);
+            TEntity entity = await _unitOfWork.GetRepository<TEntity>().GetById(EntityId);
 
             if (entity == null)
             {
@@ -48,7 +49,7 @@ namespace neptun_backend.Services
             }
 
             entity.isDeleted = true;
-            await unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
 

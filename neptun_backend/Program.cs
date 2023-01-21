@@ -23,6 +23,8 @@ builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddScoped<ICacheService, CacheService>();
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>()
                 .AddEntityFrameworkStores<NeptunBackendDbContext>()
                 .AddDefaultTokenProviders();
@@ -89,5 +91,14 @@ app.UseMiddleware<RequestResultMiddleware>();
 app.UseMiddleware<LoggingMiddleware>();
 
 app.MapRazorPages();
+
+using (var scope = app.Services.CreateScope())
+{
+    var cache = scope.ServiceProvider.GetService<ICacheService>();
+    if (cache != null)
+    {
+        cache.SetCache();
+    }
+}
 
 app.Run();
