@@ -33,9 +33,9 @@ namespace neptun_backend.Repository
             return await dbSet.FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task Create(TEntity entity)
+        public async Task<TEntity> Create(TEntity entity)
         {
-            await dbSet.AddAsync(entity);
+            return (await dbSet.AddAsync(entity)).Entity;
         }
 
         public void Update(TEntity entity)

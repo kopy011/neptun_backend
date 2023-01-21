@@ -17,9 +17,13 @@ namespace neptun_backend.Services
     public class PersonService<TEntity> : AbstractService<TEntity>, IPersonService<TEntity> where TEntity : Person
     {
         protected readonly UserManager<ApplicationUser> _userManager;
-        public PersonService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : base(unitOfWork)
+        protected readonly ICourseService _courseService;
+        protected readonly ICacheService _cacheService;
+        public PersonService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, ICacheService cacheService, ICourseService courseService) : base(unitOfWork)
         {
             _userManager = userManager;
+            _cacheService = cacheService;
+            _courseService = courseService;
         }
 
         public IEnumerable<Course> GetAllCourse(int PersonId, int SemesterId, bool IgnoreFilters = false)
@@ -32,18 +36,17 @@ namespace neptun_backend.Services
 
         public async Task TakeACourse(int PersonId, int CourseId)
         {
-            var person = _unitOfWork.GetRepository<TEntity>().GetAll(tracking: true).Include(i => i.Courses).FirstOrDefault(i => i.Id == PersonId)
+            var person = await _unitOfWork.GetRepository<TEntity>().GetAll(tracking: true).Include(i => i.Courses).FirstOrDefaultAsync(i => i.Id == PersonId)
                 ?? throw new Exception("Person not found!");
-            var course = _unitOfWork.GetRepository<Course>().GetAll(tracking: true).Include(c => c.Instructors).FirstOrDefault(c => c.Id == CourseId)
+            //TODO memory cache (talán az a megoldás hogy a tracking állítható legyen)
+            var course = await _unitOfWork.GetRepository<Course>().GetAll(tracking: true).FirstOrDefaultAsync(c => c.Id == CourseId)
                 ?? throw new Exception("Course not found!");
 
             if (person.Courses.Contains(course))
             {
                 throw new Exception(person.GetType().ToString().Split('.').Last() + " already has the course!");
             }
-
             person.Courses.Add(course);
-
             await _unitOfWork.SaveChangesAsync();
         }
 

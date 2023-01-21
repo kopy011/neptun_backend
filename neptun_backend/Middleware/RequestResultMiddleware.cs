@@ -61,12 +61,10 @@ namespace neptun_backend.Middleware
         private async Task<JObject> CreateResponseJson(HttpContext context, HttpResponse response, ICourseService _courseService, bool isStudent, string neptunCode)
         {
             var responseBodyContent = await GetResponseBodyContent(response);
-            var content = IsStudentCourseRequest(context, isStudent, neptunCode) ? JToken.Parse(await GetSerializedFilteredCourses(context, _courseService, neptunCode))
-                : string.IsNullOrEmpty(responseBodyContent) ? "" : JToken.Parse(responseBodyContent);
             try
             {
-
-
+                var content = IsStudentCourseRequest(context, isStudent, neptunCode) ? JToken.Parse(await GetSerializedFilteredCourses(context, _courseService, neptunCode))
+                    : string.IsNullOrEmpty(responseBodyContent) ? "" : JToken.Parse(responseBodyContent);
                 JObject resultJson = new JObject
                 {
                     {"content", string.IsNullOrEmpty(content.ToString()) ? "" : content },
@@ -97,10 +95,6 @@ namespace neptun_backend.Middleware
                 courseIds.Add(course.Id);
             }
             var filteredCourses = _courseService.getCoursesByNeptunCode(courseIds, neptunCode).ToList();
-            foreach(var course in filteredCourses)
-            {
-                Console.WriteLine(course.Name);
-            }
             return filteredCourses.Count == 0 ? "" : JsonConvert.SerializeObject(filteredCourses, Formatting.None,
                 new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
         }

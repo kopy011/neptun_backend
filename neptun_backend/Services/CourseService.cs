@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.EntityFrameworkCore;
 using neptun_backend.Context;
 using neptun_backend.Entities;
 using neptun_backend.UnitOfWork;
@@ -25,9 +26,30 @@ namespace neptun_backend.Services
 
         public override IEnumerable<Course> GetAll(bool IgnoreFilters = false)
         {
-            _cacheService.GetAll<Course>();
+            return _cacheService.GetAll<Course>();
+        }
 
-            return base.GetAll(IgnoreFilters);
+        public override async Task<Course> GetById(int CourseId)
+        {
+            Course course;
+            if(!_cacheService.TryGetValue(CourseId, out course))
+            {
+                course = await base.GetById(CourseId);
+            }
+            if(course == null)
+            {
+                throw new Exception("Course not found!");
+            }
+            return course;
+        }
+
+        public override async Task<Course> Create(Course course)
+        {
+            var createdCourse = await base.Create(course);
+            createdCourse = await _unitOfWork.Context().Set<Course>().Include(c => c.Instructors).Include(c => c.Students)
+                .Where(c => c.Id == createdCourse.Id).FirstOrDefaultAsync();
+            _cacheService.Set(createdCourse.Id, createdCourse);
+            return createdCourse;
         }
 
         public override async Task Update(Course course)
@@ -38,24 +60,32 @@ namespace neptun_backend.Services
                 course.ScheduleInformation = savedCourse?.ScheduleInformation;
             }
 
-            _unitOfWork.GetRepository<Course>().Update(course);
-            await _unitOfWork.SaveChangesAsync();
+            await base.Update(course);
+            course = await _unitOfWork.Context().Set<Course>().Include(c => c.Instructors).Include(c => c.Instructors)
+                .Where(c => c.Id == course.Id).FirstOrDefaultAsync();
+            _cacheService.Set(course.Id, course);
+        }
+
+        public async override Task Delete(int EntityId)
+        {
+            await base.Delete(EntityId);
+            _cacheService.Remove(EntityId);
         }
 
         public IEnumerable<Course> getCoursesByDates(DateTime startDate, DateTime endDate, bool ignoreFilters = false)
         {
+            //TODO cache általakítás
             return _courseUnitOfWork.GetCoursesByDates(startDate, endDate, ignoreFilters);
         }
 
         public IEnumerable<Course> getHardCourses(bool ignoreFilters = false)
         {
-            return _unitOfWork.GetRepository<Course>().GetAll(ignoreFilters).Include(c => c.Instructors).Where(c => c.Credit >= 4);
+            return _cacheService.GetAll<Course>().Where(c => c.Credit >= 4);
         }
 
         public IEnumerable<Course> getCoursesByNeptunCode(List<int> courseIds, string neptunCode, bool ignoreFilters = false)
         {
-            return _unitOfWork.GetRepository<Course>().GetAll(ignoreFilters).Include(c => c.Students)
-                .Where(c => courseIds.Contains(c.Id) && c.Students.Any(s => s.NeptunCode == neptunCode));
+            return _cacheService.GetAll<Course>().Where(c => courseIds.Contains(c.Id) && c.Students.Any(s => s.NeptunCode == neptunCode));
         }
     }
 }

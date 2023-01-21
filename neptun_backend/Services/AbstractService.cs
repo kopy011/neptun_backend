@@ -8,7 +8,8 @@ namespace neptun_backend.Services
     public interface IAbstractService<TEntity> where TEntity : AbstractEntity
     {
         IEnumerable<TEntity> GetAll(bool IgnoreFilters = false);
-        Task Create(TEntity Entity);
+        Task<TEntity> GetById(int EntityId);
+        Task<TEntity> Create(TEntity Entity);
         Task Update(TEntity Entity);
         Task Delete(int EntityId);
     }
@@ -27,10 +28,16 @@ namespace neptun_backend.Services
             return _unitOfWork.GetRepository<TEntity>().GetAll(ignoreFilters: IgnoreFilters);
         }
 
-        public async Task Create(TEntity Entity)
+        public virtual async Task<TEntity> GetById(int EntityId)
         {
-            await _unitOfWork.GetRepository<TEntity>().Create(Entity);
+            return await _unitOfWork.GetRepository<TEntity>().GetById(EntityId);
+        }
+
+        public virtual async Task<TEntity> Create(TEntity Entity)
+        {
+            var createdEntity = await _unitOfWork.GetRepository<TEntity>().Create(Entity);
             await _unitOfWork.SaveChangesAsync();
+            return createdEntity;
         }
 
         public virtual async Task Update(TEntity Entity)

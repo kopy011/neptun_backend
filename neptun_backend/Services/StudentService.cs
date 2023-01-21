@@ -12,7 +12,8 @@ namespace neptun_backend.Services
 
     public class StudentService : PersonService<Student>, IStudentService
     {
-        public StudentService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : base(unitOfWork, userManager) 
+        public StudentService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, ICacheService cacheService, ICourseService courseService) : 
+            base(unitOfWork, userManager, cacheService, courseService) 
         {
         }
     }
