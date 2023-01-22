@@ -4,7 +4,7 @@
     {
         IQueryable<TEntity> GetAll(bool tracking = false, bool ignoreFilters = false);
 
-        Task<TEntity> GetById(int id);
+        Task<TEntity> GetById(int id, bool tracking = false);
 
         Task<TEntity> Create(TEntity entity);
 

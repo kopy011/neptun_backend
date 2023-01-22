@@ -29,16 +29,12 @@ namespace neptun_backend.Services
             return _cacheService.GetAll<Course>();
         }
 
-        public override async Task<Course> GetById(int CourseId)
+        public override async Task<Course> GetById(int CourseId, bool tracking = false)
         {
             Course course;
-            if(!_cacheService.TryGetValue(CourseId, out course))
+            if (!_cacheService.TryGetValue(CourseId, out course))
             {
-                course = await base.GetById(CourseId);
-            }
-            if(course == null)
-            {
-                throw new Exception("Course not found!");
+                course = await base.GetById(CourseId, tracking);
             }
             return course;
         }
@@ -54,9 +50,9 @@ namespace neptun_backend.Services
 
         public override async Task Update(Course course)
         {
-            if(course.ScheduleInformation == null)
+            if (course.ScheduleInformation == null)
             {
-                var savedCourse = await _unitOfWork.GetRepository<Course>().GetAll().Where(c => c.Id == course.Id).FirstOrDefaultAsync();
+                var savedCourse = await GetById(course.Id);
                 course.ScheduleInformation = savedCourse?.ScheduleInformation;
             }
 
@@ -74,7 +70,6 @@ namespace neptun_backend.Services
 
         public IEnumerable<Course> getCoursesByDates(DateTime startDate, DateTime endDate, bool ignoreFilters = false)
         {
-            //TODO cache általakítás
             return _courseUnitOfWork.GetCoursesByDates(startDate, endDate, ignoreFilters);
         }
 

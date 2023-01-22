@@ -43,10 +43,10 @@ namespace neptun_backend.Services
             }
             var result = new List<TEntity>();
 
-            foreach(var key in keys)
+            foreach (var key in keys)
             {
                 TEntity entity;
-                if(TryGetValue(key, out entity))
+                if (TryGetValue(key, out entity))
                 {
                     result.Add(entity);
                 }

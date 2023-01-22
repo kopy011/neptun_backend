@@ -28,9 +28,10 @@ namespace neptun_backend.Repository
             }
         }
 
-        public async Task<TEntity> GetById(int id)
+        public async Task<TEntity> GetById(int id, bool tracking = false)
         {
-            return await dbSet.FirstOrDefaultAsync(e => e.Id == id);
+            return tracking ? await dbSet.FirstOrDefaultAsync(e => e.Id == id)
+                : await dbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<TEntity> Create(TEntity entity)

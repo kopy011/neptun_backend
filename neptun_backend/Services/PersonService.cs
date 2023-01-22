@@ -38,8 +38,8 @@ namespace neptun_backend.Services
         {
             var person = await _unitOfWork.GetRepository<TEntity>().GetAll(tracking: true).Include(i => i.Courses).FirstOrDefaultAsync(i => i.Id == PersonId)
                 ?? throw new Exception("Person not found!");
-            //TODO memory cache (talán az a megoldás hogy a tracking állítható legyen)
-            var course = await _unitOfWork.GetRepository<Course>().GetAll(tracking: true).FirstOrDefaultAsync(c => c.Id == CourseId)
+
+            var course = await _unitOfWork.GetRepository<Course>().GetAll().FirstOrDefaultAsync(c => c.Id == CourseId)
                 ?? throw new Exception("Course not found!");
 
             if (person.Courses.Contains(course))
@@ -54,7 +54,7 @@ namespace neptun_backend.Services
         {
             var person = await _unitOfWork.GetRepository<TEntity>().GetById(PersonId);
 
-            if(person == null)
+            if (person == null)
             {
                 throw new Exception("Person not found!");
             }
@@ -62,7 +62,7 @@ namespace neptun_backend.Services
             //delete the person's user too (if there is any)
             var user = _userManager.Users.FirstOrDefault(u => u.NeptunCode == person.NeptunCode);
 
-            if(user != null)
+            if (user != null)
             {
                 user.isDeleted = true;
                 await _userManager.UpdateAsync(user);

@@ -61,10 +61,20 @@ namespace neptun_backend.Middleware
         private async Task<JObject> CreateResponseJson(HttpContext context, HttpResponse response, ICourseService _courseService, bool isStudent, string neptunCode)
         {
             var responseBodyContent = await GetResponseBodyContent(response);
+
+            JToken content;
+            if (IsStudentCourseRequest(context, isStudent, neptunCode))
+            {
+                var serializedFilteredCourses = await GetSerializedFilteredCourses(context, _courseService, neptunCode);
+                content = string.IsNullOrEmpty(serializedFilteredCourses) ? "" : JToken.Parse(serializedFilteredCourses);
+            }
+            else
+            {
+                content = string.IsNullOrEmpty(responseBodyContent) ? "" : JToken.Parse(responseBodyContent);
+            }
+
             try
             {
-                var content = IsStudentCourseRequest(context, isStudent, neptunCode) ? JToken.Parse(await GetSerializedFilteredCourses(context, _courseService, neptunCode))
-                    : string.IsNullOrEmpty(responseBodyContent) ? "" : JToken.Parse(responseBodyContent);
                 JObject resultJson = new JObject
                 {
                     {"content", string.IsNullOrEmpty(content.ToString()) ? "" : content },
@@ -88,13 +98,8 @@ namespace neptun_backend.Middleware
         private async Task<string> GetSerializedFilteredCourses(HttpContext context, ICourseService _courseService, string neptunCode)
         {
             var coursesStr = await GetResponseBodyContent(context.Response);
-            var courses = JsonConvert.DeserializeObject<IList<Course>>(coursesStr);
-            var courseIds = new List<int>();
-            foreach(var course in courses)
-            {
-                courseIds.Add(course.Id);
-            }
-            var filteredCourses = _courseService.getCoursesByNeptunCode(courseIds, neptunCode).ToList();
+            var courseIds = from course in JsonConvert.DeserializeObject<IList<Course>>(coursesStr) select course.Id;
+            var filteredCourses = _courseService.getCoursesByNeptunCode(courseIds.ToList(), neptunCode).ToList();
             return filteredCourses.Count == 0 ? "" : JsonConvert.SerializeObject(filteredCourses, Formatting.None,
                 new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
         }
